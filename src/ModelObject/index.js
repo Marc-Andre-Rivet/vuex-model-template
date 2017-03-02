@@ -2,17 +2,19 @@ import _ from 'lodash';
 import TYPE from 'enumerations/type';
 import Wrapper from 'ProxyWrapper';
 
+let stack = [];
+
 function apply(data, template) {
     let expectedProperties = _.intersection(
-        Object.getOwnPropertyNames(data),
-        Object.getOwnPropertyNames(template)
+        _.keys(data),
+        _.keys(template)
     );
 
     _.defaults(this, data);
 
     let missingProperties = _.difference(
-        Object.getOwnPropertyNames(template),
-        Object.getOwnPropertyNames(data)
+        _.keys(template),
+        _.keys(data)
     );
 
     _.each(missingProperties, property => {
@@ -20,8 +22,33 @@ function apply(data, template) {
     });
 }
 
+function applyActions(template) {
+    let actions = {};
+
+    let properties = Object.getOwnPropertyNames(template);
+    _.each(properties, property => {
+        let propertyActions = template[property].actions;
+        _.forOwn(template[property].actions, (value, key) => {
+            if (key === 'set' || key === 'clear') {
+                actions[value] = value;
+            } else if (key === 'add' || key === 'remove') {
+                actions[property] = actions[property] || {};
+                actions[property][value] = value;
+            } else {
+                throw new Error();
+            }
+        });
+
+        if (template[property].properties) {
+            actions[property] = applyActions(template[property].properties);
+        }
+    });
+
+    return actions;
+}
+
 function throwError(type, data) {
-    throw new Error(`expected ${type.toString()}, got ${typeof data}`);
+    throw new Error(`expected ${type.toString()} but got ${typeof data} in ${stack.join('.')}`);
 }
 
 function validateProperty(template) {
@@ -46,6 +73,13 @@ function validateProperty(template) {
                 throwError(template.type, this);
             }
             break;
+        case TYPE.Complex:
+            if (!_.isObject(this)) {
+                throwError(template.type, this);
+            }
+
+            this::validate(template.properties)
+            break;
         case TYPE.Number:
             if (!_.isNumber(this)) {
                 throwError(template.type, this);
@@ -66,35 +100,37 @@ function validateProperty(template) {
     }
 }
 
-function validate(data, template) {
-    let dataProperties = Object.getOwnPropertyNames(data);
-    let templateProperties = Object.getOwnPropertyNames(template);
-
+function validate(template) {
     let unexpectedProperties = _.difference(
-        Object.getOwnPropertyNames(data),
-        Object.getOwnPropertyNames(template)
+        _.keys(this),
+        _.keys(template)
     );
 
     if (unexpectedProperties.length) {
-        throw new Error(`unexpected properties found in data: ${unexpectedProperties}`);
+        throw new Error(`unexpected properties found in ${stack.join('.') || 'data'}: ${unexpectedProperties}`);
     }
 
     let expectedProperties = _.intersection(
-        Object.getOwnPropertyNames(data),
-        Object.getOwnPropertyNames(template)
+        _.keys(this),
+        _.keys(template)
     );
 
     _.each(expectedProperties, expectedProperty => {
-        data[expectedProperty]::validateProperty(template[expectedProperty]);
+        stack.push(expectedProperty);
+        this[expectedProperty]::validateProperty(template[expectedProperty]);
+        stack.splice(-1);
     });
 }
 
 export default class ModelObject {
     constructor(data, template) {
+        stack = [];
         data = data || {};
 
-        this::validate(data, template);
+        data::validate(template);
         this::apply(data, template);
+
+        this.actions = applyActions(template);
 
         return Wrapper.getProxy(this);
     }

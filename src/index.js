@@ -3,6 +3,43 @@ import _ from 'lodash';
 import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
+// const PROPERTY_TEMPLATE = {
+//     type: {
+//         type: TYPE.Symbol,
+//         defaultValue: TYPE.Any
+//     },
+//     defaultValue: {
+//         type: TYPE.Any,
+//         defaultValue: undefined
+//     },
+//     sideEffets: {
+//         type: TYPE.Array,
+//         defaultValue: []
+//     },
+//     actions: {
+//         set: {
+//             type: TYPE.String,
+//             defaultValue: undefined
+//         },
+//         clear: {
+//             type: TYPE.String,
+//             defaultValue: undefined
+//         },
+//         add: {
+//             type: TYPE.String,
+//             defaultValue: undefined
+//         },
+//         remove: {
+//             type: TYPE.String,
+//             defaultValue: undefined
+//         }
+//     },
+//     properties: {
+//         type: TYPE.Object,
+//         defaultValue: {}
+//     }
+// };
+
 const EDITABLE_OBJECT_TEMPLATE = {
     dirty: {
         type: TYPE.Boolean,
@@ -33,14 +70,36 @@ const DATABASE_OBJECT_TEMPLATE = {
     },
     meta: {
         type: TYPE.Object,
-        additionalProperties: true,
-        properties: {
-
-        },
         defaultValue: {},
         sideEffects: [],
         actions: {
             set: 'setMeta'
+        }
+    },
+    meta2: {
+        type: TYPE.Complex,
+        properties: {
+            sub: {
+                type: TYPE.Any,
+                defaultValue: undefined,
+                sideEffects: [],
+                actions: {
+                    set: 'setSub'
+                }
+            },
+            sub2: {
+                type: TYPE.String,
+                defaultValue: undefined,
+                sideEffects: [],
+                actions: {
+                    set: 'setSub2'
+                }
+            }
+        },
+        defaultValue: {},
+        sideEffects: [],
+        actions: {
+            set: 'setMeta2'
         }
     },
     version: {
@@ -87,9 +146,9 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
             value: true
         }],
         actions: {
-            add: 'addTag',
+            add: 'add',
             clear: 'clearTags',
-            remove: 'removeTag',
+            remove: 'remove',
             set: 'setTags'
         }
     }
@@ -102,6 +161,10 @@ let obj = new ModelObject({
     meta: {
         a: 'a',
         b: 'b'
+    },
+    meta2: {
+        sub: 'sub',
+        sub2: '3'
     },
     version: 345,
     name: 'name',
