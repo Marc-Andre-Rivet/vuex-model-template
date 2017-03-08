@@ -7,7 +7,8 @@ let webpack = require('webpack');
 
 let babelSettings = JSON.stringify({
     plugins: [/*'lodash',*/ 'babel-plugin-transform-function-bind', 'transform-object-rest-spread'],
-    presets: ['es2015']
+    presets: ['es2015'],
+    cacheDirectory: true
 });
 
 module.exports = {
@@ -30,6 +31,9 @@ module.exports = {
             path.resolve('./src'),
             'node_modules'
         ],
+        alias: {
+            vue: 'vue/dist/vue.js'
+        },
         extensions: ['.js']
     },
     module: {
