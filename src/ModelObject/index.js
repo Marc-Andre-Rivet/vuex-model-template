@@ -25,7 +25,7 @@ function apply(data, template) {
         } else {
             console.log('apply default value to complex type', property);
             this[property] = {};
-            this[property]::apply(data ? data[property] : undefined, template[property].properties);
+            this[property]::apply(data && data[property] ? data[property] : undefined, template[property].properties);
         }
     });
 }
