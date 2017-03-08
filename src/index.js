@@ -1,7 +1,15 @@
 import _ from 'lodash';
+import Vue from 'vue';
+import Vuex from 'vuex';
+Vue.use(Vuex);
 
-import ModelObject from 'ModelObject';
+import ModelObject, { setStore } from 'ModelObject';
 import TYPE from 'enumerations/type';
+
+setStore(new Vuex.Store({
+    strict: true,
+    modules: {}
+}));
 
 // const PROPERTY_TEMPLATE = {
 //     type: {
@@ -117,6 +125,7 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
         type: TYPE.String,
         defaultValue: undefined,
         sideEffects: [{
+            action: 'set',
             property: 'dirty',
             value: true
         }],
@@ -128,6 +137,7 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
         type: TYPE.String,
         defaultValue: undefined,
         sideEffects: [{
+            action: 'set',
             property: 'dirty',
             value: true
         }],
@@ -142,6 +152,7 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
         },
         defaultValue: [],
         sideEffects: [{
+            action: 'set',
             property: 'dirty',
             value: true
         }],
@@ -171,4 +182,6 @@ let obj = new ModelObject({
     description: 'description',
     tags: ['1', '2', '3']
 }, MODEL_OBJECT_TEMPLATE);
-console.log(obj);
+console.log(obj.id);
+obj.actions.setId(234);
+console.log(obj.id);

@@ -13,7 +13,15 @@ export default class ProxyWrapper {
 
         return new Proxy(target, {
             get(t, key) {
-                if (keys.indexOf(key) === -1) {
+                if (typeof key !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
+                    key !== '__ob__' && // protection for VueJS models
+                    key !== '_isVue' &&
+                    key !== 'toJSON' && // JSON.stringify
+                    key !== 'actions' &&
+                    key !== 'moduleId' &&
+                    key !== 'then' &&
+                    keys.indexOf(key) === -1
+                ) {
                     throw new Error(`unknown property '${key}'`);
                 }
 

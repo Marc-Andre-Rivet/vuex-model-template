@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import TYPE from 'enumerations/type';
 
 let stack = [];
 
@@ -78,6 +79,10 @@ function validate(template) {
 }
 
 export default template => {
+    if (!this) {
+        return;
+    }
+
     stack = [];
     this::validate(template);
 };
