@@ -20,7 +20,13 @@ function apply(data, template) {
     );
 
     _.each(defaultProperties, property => {
-        this[property] = _.cloneDeep(template[property].defaultValue);
+        if (template[property].type !== TYPE.Complex) {
+            this[property] = _.cloneDeep(template[property].defaultValue);
+        } else {
+            console.log('apply default value to complex type', property);
+            this[property] = {};
+            this[property]::apply(data ? data[property] : undefined, template[property].properties);
+        }
     });
 }
 
@@ -45,7 +51,7 @@ function visitUserActions(template) {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
             actions[property][key] = (...args) => {
-                console.log('user action', actionName, ...args);
+                console.log('do', actionName, ...args);
                 this::act(actionName, ...args);
             };
         });
@@ -55,6 +61,21 @@ function visitUserActions(template) {
             actions[property] = _.extend(actions[property], this::visitUserActions(template[property].properties));
             prefixes.splice(-1);
         }
+    });
+
+    return actions;
+}
+
+function visitCustomActions(customModule) {
+    let actions = {};
+
+    _.forOwn(customModule, (value, key) => {
+        let actionName = `[${this.$moduleId}]:${key}`;
+
+        actions[key] = (...args) => {
+            console.log('do', actionName, ...args);
+            this::act(actionName, ...args);
+        };
     });
 
     return actions;
@@ -75,7 +96,7 @@ export default class ModelObject {
         store,
         data,
         template,
-        module = { actions: {}, mutations: {} }
+        module = { }
     ) {
         if (!store) {
             throw 'You must register the store before creating model objects.';
@@ -90,7 +111,11 @@ export default class ModelObject {
         data::validate(template);
         this::apply(data, template);
 
-        this.actions = this::visitUserActions(template);
+        this.actions = {
+            ...this::visitUserActions(template),
+            ...this::visitCustomActions(module)
+        };
+
 
         // let proxy = Wrapper.getProxy(this);
         this::moduleFn(template, module);

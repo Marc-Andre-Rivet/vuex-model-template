@@ -12,7 +12,7 @@ let babelSettings = JSON.stringify({
 
 module.exports = {
     entry: {
-        index: ['./src/index.js', './src/index.htm']
+        index: ['./src/index.js']
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -32,9 +32,6 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: `babel-loader?${babelSettings}`
-            }, {
-                test: /index\.htm(l?)$/,
-                loader: 'file-loader?name=[name].[ext]'
             }
         ]
     },

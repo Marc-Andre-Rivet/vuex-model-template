@@ -25,7 +25,7 @@ function visitActions(template) {
                 _.each(template[property].sideEffects, sideEffect => {
                     let sideEffectName = `[${this.$moduleId}]/${sideEffect.property}:${sideEffect.action}`;
 
-                    console.log('side effect: ', sideEffectName, sideEffect.value);
+                    console.log('act/side-effect', sideEffectName, sideEffect.value);
                     commit(sideEffectName, sideEffect.value);
                 });
             };
@@ -93,16 +93,20 @@ function visitMutations(template) {
 }
 
 export default function (template, module) {
-    console.log('generate module', this);
+    // mapping action to module id
+    _.forOwn(module, (value, key) => {
+        delete module[key];
+        module[`[${this.$moduleId}]:${key}`] = value;
+    });
+
     this.$store.registerModule(this.$moduleId, {
         state: this,
         actions: {
             ...this::visitActions(template),
-            ...module.actions
+            ...module
         },
         mutations: {
-            ...this::visitMutations(template),
-            ...module.mutations
+            ...this::visitMutations(template)
         }
     });
 
