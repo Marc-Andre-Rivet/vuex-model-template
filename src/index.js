@@ -1,122 +1,54 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import Vuex from 'vuex';
-Vue.use(Vuex);
 
-import ModelObject, { setStore } from 'ModelObject';
+import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
-setStore(new Vuex.Store({
+Vue.use(Vuex);
+
+let store = new Vuex.Store({
     strict: true,
     modules: {}
-}));
-
-// const PROPERTY_TEMPLATE = {
-//     type: {
-//         type: TYPE.Symbol,
-//         defaultValue: TYPE.Any
-//     },
-//     defaultValue: {
-//         type: TYPE.Any,
-//         defaultValue: undefined
-//     },
-//     sideEffets: {
-//         type: TYPE.Array,
-//         defaultValue: []
-//     },
-//     actions: {
-//         set: {
-//             type: TYPE.String,
-//             defaultValue: undefined
-//         },
-//         clear: {
-//             type: TYPE.String,
-//             defaultValue: undefined
-//         },
-//         add: {
-//             type: TYPE.String,
-//             defaultValue: undefined
-//         },
-//         remove: {
-//             type: TYPE.String,
-//             defaultValue: undefined
-//         }
-//     },
-//     properties: {
-//         type: TYPE.Object,
-//         defaultValue: {}
-//     }
-// };
+});
 
 const EDITABLE_OBJECT_TEMPLATE = {
     dirty: {
         type: TYPE.Boolean,
-        defaultValue: false,
-        sideEffects: [],
-        actions: {
-            set: 'setDirty'
-        }
+        defaultValue: false
     }
 };
 
 const DATABASE_OBJECT_TEMPLATE = {
     customerID: {
         type: TYPE.Any,
-        defaultValue: undefined,
-        sideEffects: [],
-        actions: {
-            set: 'setCustomerID'
-        }
+        defaultValue: undefined
     },
     id: {
         type: TYPE.Any,
-        defaultValue: undefined,
-        sideEffects: [],
-        actions: {
-            set: 'setId'
-        }
+        defaultValue: undefined
     },
     meta: {
         type: TYPE.Object,
-        defaultValue: {},
-        sideEffects: [],
-        actions: {
-            set: 'setMeta'
-        }
+        defaultValue: {}
     },
     meta2: {
         type: TYPE.Complex,
         properties: {
             sub: {
                 type: TYPE.Any,
-                defaultValue: undefined,
-                sideEffects: [],
-                actions: {
-                    set: 'setSub'
-                }
+                defaultValue: undefined
             },
             sub2: {
                 type: TYPE.String,
-                defaultValue: undefined,
-                sideEffects: [],
-                actions: {
-                    set: 'setSub2'
-                }
+                defaultValue: undefined
             }
         },
-        defaultValue: {},
-        sideEffects: [],
-        actions: {
-            set: 'setMeta2'
-        }
+        defaultValue: {}
     },
     version: {
         type: TYPE.Any,
-        defaultValue: undefined,
-        sideEffects: [],
-        actions: {
-            set: 'setVersion'
-        }
+        defaultValue: undefined
     }
 };
 
@@ -128,10 +60,7 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
             action: 'set',
             property: 'dirty',
             value: true
-        }],
-        actions: {
-            set: 'setName'
-        }
+        }]
     },
     description: {
         type: TYPE.String,
@@ -140,10 +69,7 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
             action: 'set',
             property: 'dirty',
             value: true
-        }],
-        actions: {
-            set: 'setDescription'
-        }
+        }]
     },
     tags: {
         type: TYPE.Array,
@@ -155,17 +81,21 @@ const MODEL_OBJECT_TEMPLATE = _.defaults({
             action: 'set',
             property: 'dirty',
             value: true
-        }],
-        actions: {
-            add: 'add',
-            clear: 'clearTags',
-            remove: 'remove',
-            set: 'setTags'
-        }
+        }]
+    },
+    pouet: {
+        type: TYPE.ModelObject,
+        defaultValue: undefined
     }
 }, EDITABLE_OBJECT_TEMPLATE, DATABASE_OBJECT_TEMPLATE);
 
-let obj = new ModelObject({
+class SubObject extends ModelObject {
+    constructor(store, data) {
+        super(store, data, MODEL_OBJECT_TEMPLATE);
+    }
+}
+
+let obj = new ModelObject(store, {
     dirty: false,
     id: 123,
     customerID: 234,
@@ -180,8 +110,21 @@ let obj = new ModelObject({
     version: 345,
     name: 'name',
     description: 'description',
-    tags: ['1', '2', '3']
+    tags: ['1', '2', '3'],
+    pouet: new SubObject(store, {})
 }, MODEL_OBJECT_TEMPLATE);
-console.log(obj.id);
-obj.actions.setId(234);
-console.log(obj.id);
+
+console.log('created');
+console.log('name: ', obj.name);
+obj.actions.name.set('the name!');
+obj.actions.tags.clear();
+console.log('name: ', obj.name);
+console.log('tags: ', obj.tags);
+obj.actions.tags.set([1, 2, 3]);
+console.log('tags: ', obj.tags);
+obj.actions.tags.add(4);
+obj.actions.tags.remove(2);
+console.log('tags: ', obj.tags);
+console.log('dirty: ', obj.dirty);
+obj.pouet.actions.name.set('sub name!');
+console.log('sub name: ', obj.pouet.name, obj.name);

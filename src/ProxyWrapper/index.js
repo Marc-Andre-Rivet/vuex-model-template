@@ -1,13 +1,18 @@
 import _ from 'lodash';
 
+let wm = new WeakMap();
 export default class ProxyWrapper {
     static getProxy(target) {
         /*#if vuex_model_template_dev*/
         let keys = _.keys(target);
 
         keys.forEach(key => {
-            if (typeof target[key] === 'object' && !Array.isArray(target[key])) {
+            if (typeof target[key] === 'object' &&
+                !Array.isArray(target[key]) &&
+                !wm.get(target[key])
+            ) {
                 target[key] = ProxyWrapper.getProxy(target[key]);
+                wm.set(target[key], true);
             }
         });
 
@@ -18,7 +23,8 @@ export default class ProxyWrapper {
                     key !== '_isVue' &&
                     key !== 'toJSON' && // JSON.stringify
                     key !== 'actions' &&
-                    key !== 'moduleId' &&
+                    key !== '$moduleId' &&
+                    key !== '$store' &&
                     key !== 'then' &&
                     keys.indexOf(key) === -1
                 ) {

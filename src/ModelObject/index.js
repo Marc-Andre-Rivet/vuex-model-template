@@ -4,6 +4,8 @@ import moduleFn from 'ModelObject/module';
 import validate from 'ModelObject/validate';
 import Wrapper from 'ProxyWrapper';
 
+import TYPE from 'enumerations/type';
+
 function apply(data, template) {
     let expectedProperties = _.intersection(
         _.keys(data),
@@ -18,37 +20,39 @@ function apply(data, template) {
     );
 
     _.each(defaultProperties, property => {
-        this[property] = template[property].defaultValue;
+        this[property] = _.cloneDeep(template[property].defaultValue);
     });
 }
 
+function getActions(type) {
+    if (type === TYPE.Array) {
+        return ['set', 'add', 'remove', 'clear'];
+    } else {
+        return ['set'];
+    }
+}
+
 let prefixes = [];
-function defineActions(template) {
+function visitUserActions(template) {
     let actions = {};
 
     let properties = Object.getOwnPropertyNames(template);
     _.each(properties, property => {
-        let propertyActions = template[property].actions;
-        _.forOwn(template[property].actions, (value, key) => {
-            let actionName = `[${this.moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
+        actions[property] = {};
 
-            if (key === 'set' || key === 'clear') {
-                actions[value] = (...args) => {
-                    console.log('executing', value, ...args);
-                    let target = { $store: store };
-                    target::act(actionName, ...args);
-                };
-            } else if (key === 'add' || key === 'remove') {
-                actions[property] = actions[property] || {};
-                actions[property][value] = actionName;
-            } else {
-                throw new Error(`unexpected action '${key}'`);
-            }
+        let propertyActions = template[property].actions;
+        _.forOwn(getActions(template[property].type), key => {
+            let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
+
+            actions[property][key] = (...args) => {
+                console.log('user action', actionName, ...args);
+                this::act(actionName, ...args);
+            };
         });
 
         if (template[property].properties) {
             prefixes.push(property);
-            actions[property] = this::defineActions(template[property].properties);
+            actions[property] = _.extend(actions[property], this::visitUserActions(template[property].properties));
             prefixes.splice(-1);
         }
     });
@@ -66,13 +70,9 @@ function getId() {
     return `${key}/${ids[key]++}`;
 }
 
-let store;
-export function setStore(value) {
-    store = value;
-}
-
 export default class ModelObject {
     constructor(
+        store,
         data,
         template,
         module = { actions: {}, mutations: {} }
@@ -83,21 +83,26 @@ export default class ModelObject {
 
         let id = this::getId();
         wm.set(this, {
-            moduleId: id
+            $moduleId: id,
+            $store: store
         });
 
         data::validate(template);
         this::apply(data, template);
 
-        this.actions = this::defineActions(template);
+        this.actions = this::visitUserActions(template);
 
         // let proxy = Wrapper.getProxy(this);
-        this::moduleFn(store, template);
+        this::moduleFn(template, module);
 
         // return proxy;
     }
 
-    get moduleId() {
-        return wm.get(this).moduleId;
+    get $moduleId() {
+        return wm.get(this).$moduleId;
+    }
+
+    get $store() {
+        return wm.get(this).$store;
     }
 }

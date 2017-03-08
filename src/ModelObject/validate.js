@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
 let stack = [];
@@ -36,6 +37,12 @@ function validateProperty(template) {
 
             this::validate(template.properties)
             break;
+        case TYPE.ModelObject:
+            if (this && !(this instanceof ModelObject)) {
+                throwError(template.type, this);
+            }
+
+            break;
         case TYPE.Number:
             if (!_.isNumber(this)) {
                 throwError(template.type, this);
@@ -52,7 +59,7 @@ function validateProperty(template) {
             }
             break;
         default:
-            throw new Error(`unexpected type '${template.type}'`);
+            throw new Error(`unexpected type`);
     }
 }
 
@@ -78,7 +85,7 @@ function validate(template) {
     });
 }
 
-export default template => {
+export default function(template) {
     if (!this) {
         return;
     }
