@@ -116,11 +116,10 @@ export default class ModelObject {
             ...this::visitCustomActions(module)
         };
 
-
-        // let proxy = Wrapper.getProxy(this);
+        let proxy = Wrapper.getProxy(this);
         this::moduleFn(template, module);
 
-        // return proxy;
+        return proxy;
     }
 
     get $moduleId() {

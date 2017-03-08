@@ -3,7 +3,7 @@ import _ from 'lodash';
 let wm = new WeakMap();
 export default class ProxyWrapper {
     static getProxy(target) {
-        /*#if vuex_model_template_dev*/
+        /*#if dev*/
         let keys = _.keys(target);
 
         keys.forEach(key => {

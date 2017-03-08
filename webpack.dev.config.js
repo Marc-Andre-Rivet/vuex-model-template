@@ -1,7 +1,7 @@
 let webpackConfig = require('./webpack.base.config');
 
 let settings = JSON.stringify({
-    definitions: ['vuex_model_template_dev']
+    definitions: ['dev']
 });
 
 let rule = webpackConfig.module.rules[0];

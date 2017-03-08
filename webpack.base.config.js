@@ -16,7 +16,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: 'vuex-model-template.js'
+        filename: 'vuex-model-template.dev.js'
     },
     resolve: {
         modules: [
