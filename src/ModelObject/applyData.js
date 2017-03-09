@@ -84,8 +84,6 @@ function validate(template) {
 }
 
 function apply(data, template) {
-    _.defaults(this, data);
-
     let defaultProperties = _.difference(
         _.keys(template),
         _.keys(data)
@@ -102,6 +100,17 @@ function apply(data, template) {
             this[property]::apply(propData, template[property].properties);
         }
     });
+
+    let definedProperties = _.intersection(
+        _.keys(template),
+        _.keys(data)
+    );
+
+    _.each(definedProperties, property => {
+        if (template[property].type === TYPE.Complex && data[property]) {
+            this[property]::apply(data[property], template[property].properties);
+        }
+    });
 }
 
 export default function(data, template) {
@@ -111,5 +120,7 @@ export default function(data, template) {
 
     prefixes = [];
     data::validate(template);
+
+    _.defaults(this, data);
     this::apply(data, template);
 }
