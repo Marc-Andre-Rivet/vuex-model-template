@@ -21,7 +21,6 @@ module.exports = {
         libraryTarget: 'umd'
     },
     externals: {
-        // "lodash": "lodash",
         "vue": "vue",
         "vuex": "vuex"
     },
