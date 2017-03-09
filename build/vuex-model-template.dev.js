@@ -671,13 +671,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _cloneDeep2 = __webpack_require__(/*! lodash/cloneDeep */ 31);
-
-var _cloneDeep3 = _interopRequireDefault(_cloneDeep2);
-
 var _defaults2 = __webpack_require__(/*! lodash/defaults */ 85);
 
 var _defaults3 = _interopRequireDefault(_defaults2);
+
+var _cloneDeep2 = __webpack_require__(/*! lodash/cloneDeep */ 31);
+
+var _cloneDeep3 = _interopRequireDefault(_cloneDeep2);
 
 var _intersection2 = __webpack_require__(/*! lodash/intersection */ 88);
 
@@ -729,6 +729,7 @@ exports.default = function (data, template) {
     }
     prefixes = [];
     validate.call(data, template);
+    (0, _defaults3.default)(this, data);
     apply.call(this, data, template);
 };
 
@@ -816,7 +817,6 @@ function validate(template) {
 function apply(data, template) {
     var _this2 = this;
 
-    (0, _defaults3.default)(this, data);
     var defaultProperties = (0, _difference3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
     (0, _each3.default)(defaultProperties, function (property) {
         if (template[property].type !== _type2.default.Complex) {
@@ -828,6 +828,15 @@ function apply(data, template) {
             _this2[property] = {};
             var propData = data && data[property];
             (_context2 = _this2[property], apply).call(_context2, propData, template[property].properties);
+        }
+    });
+    var definedProperties = (0, _intersection3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
+    (0, _each3.default)(definedProperties, function (property) {
+        if (template[property].type === _type2.default.Complex && data[property]) {
+            var _context3;
+
+            console.log('apply default to properties of complex type', property);
+            (_context3 = _this2[property], apply).call(_context3, data[property], template[property].properties);
         }
     });
 }
@@ -1718,7 +1727,6 @@ function visitMutations(template) {
             if (key === 'set') {
                 mutations[actionName] = function (state, value) {
                     console.log('mutate', actionName, state, value);
-                    console.log('validate', value, template[property]);
                     _applyData.validateProperty.call(value, template[property]);
                     (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];

@@ -108,6 +108,7 @@ function apply(data, template) {
 
     _.each(definedProperties, property => {
         if (template[property].type === TYPE.Complex && data[property]) {
+            console.log('apply default to properties of complex type', property);
             this[property]::apply(data[property], template[property].properties);
         }
     });
