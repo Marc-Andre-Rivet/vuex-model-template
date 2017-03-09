@@ -699,15 +699,13 @@ var ModelObject = function () {
         _applyData2.default.call(this, data, template);
         _generateActions2.default.call(this, template, customActions);
         var proxy = _ProxyWrapper2.default.getProxy(this);
-        var module = _generateModule2.default.call(proxy, template, customActions);
-        console.log(module);
+        _generateModule2.default.call(proxy, template, customActions);
         return proxy;
     }
 
     _createClass(ModelObject, [{
         key: 'toJSON',
         value: function toJSON() {
-            console.log(this, this.$template);
             return _persist2.default.call(this, {}, this.$template);
         }
     }, {
