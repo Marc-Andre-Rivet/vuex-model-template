@@ -1,3 +1,7 @@
+import _ from 'lodash';
+import { act } from 'vuex/mixin';
+import getActions from 'ModelObject/getActions';
+
 let prefixes = [];
 function visitUserActions(template) {
     let actions = {};
@@ -6,7 +10,6 @@ function visitUserActions(template) {
     _.each(properties, property => {
         actions[property] = {};
 
-        let propertyActions = template[property].actions;
         _.forOwn(getActions(template[property].type), key => {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 

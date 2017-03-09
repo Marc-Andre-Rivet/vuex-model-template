@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { mapActions, mapMutations } from 'vuex';
 
 export function mutate(name, ...args) {

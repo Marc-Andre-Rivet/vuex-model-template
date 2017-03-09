@@ -16,7 +16,7 @@ export default class ProxyWrapper {
             }
         });
 
-        return new Proxy(target, {
+        target = new Proxy(target, {
             get(t, key) {
                 if (typeof key !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
                     key !== '__ob__' && // protection for VueJS models
@@ -34,8 +34,8 @@ export default class ProxyWrapper {
                 return t[key];
             }
         });
-        /*#else*/
-        return target;
         /*#endif*/
+
+        return target;
     }
 }

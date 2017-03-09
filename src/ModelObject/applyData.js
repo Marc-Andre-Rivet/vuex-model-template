@@ -2,10 +2,6 @@ import _ from 'lodash';
 import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
-function throwError(type, data) {
-    throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${stack.join('.')}'`);
-}
-
 function validateProperty(template) {
     if (_.isUndefined(this)) {
         return;
@@ -33,7 +29,7 @@ function validateProperty(template) {
                 throwError(template.type, this);
             }
 
-            this::validate(template.properties)
+            this::validate(template.properties);
             break;
         case TYPE.ModelObject:
             if (this && !(this instanceof ModelObject)) {
@@ -61,6 +57,10 @@ function validateProperty(template) {
     }
 }
 
+function throwError(type, data) {
+    throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${prefixes.join('.')}'`);
+}
+
 let prefixes = [];
 function validate(template) {
     let unexpectedProperties = _.difference(
@@ -85,11 +85,6 @@ function validate(template) {
 }
 
 function apply(data, template) {
-    let expectedProperties = _.intersection(
-        _.keys(data),
-        _.keys(template)
-    );
-
     _.defaults(this, data);
 
     let defaultProperties = _.difference(
@@ -118,4 +113,4 @@ export default function(data, template) {
     prefixes = [];
     data::validate(template);
     this::apply(data, template);
-};
+}
