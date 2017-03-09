@@ -35,7 +35,6 @@ function validateProperty(template) {
             if (this && !(this instanceof ModelObject)) {
                 throwError(template.type, this);
             }
-
             break;
         case TYPE.Number:
             if (!_.isNumber(this)) {
