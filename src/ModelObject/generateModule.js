@@ -1,14 +1,6 @@
 import _ from 'lodash';
 
-import TYPE from 'enumerations/type';
-
-function getActions(type) {
-    if (type === TYPE.Array) {
-        return ['set', 'add', 'remove', 'clear'];
-    } else {
-        return ['set'];
-    }
-}
+import getActions from 'ModelObject/getActions';
 
 let prefixes = [];
 function visitActions(template) {
@@ -98,7 +90,7 @@ export default function (template, module) {
         mappedModule[`[${this.$moduleId}]:${key}`] = value;
     });
 
-    this.$store.registerModule(this.$moduleId, {
+    return this.$store.registerModule(this.$moduleId, {
         state: this,
         actions: {
             ...this::visitActions(template),
@@ -108,6 +100,4 @@ export default function (template, module) {
             ...this::visitMutations(template)
         }
     });
-
-    return module;
 }
