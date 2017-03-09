@@ -1775,7 +1775,9 @@ function persist(target, template) {
                 target[key] = (_context = _this[key], persist).call(_context, {}, property.properties);
             }
         } else if (property.type === _type2.default.ModelObject) {
-            target[key] = property.transform(_this[key]);
+            if (property.transform) {
+                target[key] = property.transform(_this[key]);
+            }
         } else {
             target[key] = _this[key];
         }
