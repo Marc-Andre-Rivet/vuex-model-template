@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+import { validateProperty } from 'ModelObject/applyData';
 import getActions from 'ModelObject/getActions';
 
 let prefixes = [];
@@ -44,6 +45,8 @@ function visitMutations(template) {
             if (key === 'set') {
                 mutations[actionName] = (state, value) => {
                     console.log('mutate', actionName, state, value);
+
+                    value::validateProperty(template[property]);
                     _.reduce(chain, (t, prop) => t[prop], state)[property] = value;
                 };
             } else if (key === 'clear') {
@@ -54,6 +57,8 @@ function visitMutations(template) {
             } else if (key === 'add') {
                 mutations[actionName] = (state, value) => {
                     console.log('mutate', actionName, state, value);
+
+                    value::validateProperty(template[property].items);
                     _.reduce(chain, (t, prop) => t[prop], state)[property].push(value);
                 };
             } else if (key === 'remove') {

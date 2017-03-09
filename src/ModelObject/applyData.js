@@ -2,7 +2,7 @@ import _ from 'lodash';
 import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
-function validateProperty(template) {
+export function validateProperty(template) {
     if (_.isUndefined(this)) {
         return;
     }
