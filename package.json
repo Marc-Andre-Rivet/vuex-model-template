@@ -1,6 +1,6 @@
 {
   "name": "vuex-model-template",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Generation of vuex module from object template",
   "main": "src/index.js",
   "devDependencies": {
@@ -23,8 +23,9 @@
   },
   "scripts": {
     "build.dev": "eslint src && webpack --config webpack.dev.config.js -d --devtool source-map --display-reasons --progress --bail",
+    "build.instrumented": "eslint src && webpack --config webpack.instrumented.config.js -d --devtool source-map --display-reasons --progress --bail",
     "build.prod": "eslint src && webpack --config webpack.prod.config.js -p --devtool source-map --display-reasons --bail",
-    "build": "npm run build.dev && npm run build.prod"
+    "build": "npm run build.dev && npm run build.instrumented && npm run build.prod"
   },
   "repository": {
     "type": "git",

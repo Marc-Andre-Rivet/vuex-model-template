@@ -93,7 +93,9 @@ function apply(data, template) {
         if (template[property].type !== TYPE.Complex) {
             this[property] = _.cloneDeep(template[property].defaultValue);
         } else {
+            /*#if log*/
             console.log('apply default value to complex type', property);
+            /*#endif*/
             this[property] = {};
 
             let propData = data && data[property];
@@ -108,7 +110,9 @@ function apply(data, template) {
 
     _.each(definedProperties, property => {
         if (template[property].type === TYPE.Complex && data[property]) {
+            /*#if log*/
             console.log('apply default to properties of complex type', property);
+            /*#endif*/
             this[property]::apply(data[property], template[property].properties);
         }
     });

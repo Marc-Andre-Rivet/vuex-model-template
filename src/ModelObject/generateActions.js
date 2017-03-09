@@ -14,7 +14,9 @@ function visitUserActions(template) {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
             actions[property][key] = (...args) => {
+                /*#if log*/
                 console.log('do', actionName, ...args);
+                /*#endif*/
                 this::act(actionName, ...args);
             };
         });
@@ -36,7 +38,9 @@ function visitCustomActions(customModule) {
         let actionName = `[${this.$moduleId}]:${key}`;
 
         actions[key] = (...args) => {
+            /*#if log*/
             console.log('do', actionName, ...args);
+            /*#endif*/
             this::act(actionName, ...args);
         };
     });

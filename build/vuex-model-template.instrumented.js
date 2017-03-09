@@ -824,6 +824,7 @@ function apply(data, template) {
         } else {
             var _context2;
 
+            console.log('apply default value to complex type', property);
             _this2[property] = {};
             var propData = data && data[property];
             (_context2 = _this2[property], apply).call(_context2, propData, template[property].properties);
@@ -834,6 +835,7 @@ function apply(data, template) {
         if (template[property].type === _type2.default.Complex && data[property]) {
             var _context3;
 
+            console.log('apply default to properties of complex type', property);
             (_context3 = _this2[property], apply).call(_context3, data[property], template[property].properties);
         }
     });
@@ -1584,10 +1586,13 @@ function visitUserActions(template) {
         (0, _forOwn3.default)((0, _getActions2.default)(template[property].type), function (key) {
             var actionName = '[' + _this.$moduleId + ']/' + prefixes.join('/') + (prefixes.length ? '/' : '') + property + ':' + key;
             actions[property][key] = function () {
+                var _console;
+
                 for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                     args[_key] = arguments[_key];
                 }
 
+                (_console = console).log.apply(_console, ['do', actionName].concat(args));
                 _mixin.act.call.apply(_mixin.act, [_this, actionName].concat(args));
             };
         });
@@ -1606,10 +1611,13 @@ function visitCustomActions(customModule) {
     (0, _forOwn3.default)(customModule, function (value, key) {
         var actionName = '[' + _this2.$moduleId + ']:' + key;
         actions[key] = function () {
+            var _console2;
+
             for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
                 args[_key2] = arguments[_key2];
             }
 
+            (_console2 = console).log.apply(_console2, ['do', actionName].concat(args));
             _mixin.act.call.apply(_mixin.act, [_this2, actionName].concat(args));
         };
     });
@@ -1692,6 +1700,7 @@ function visitActions(template) {
             actions[actionName] = function (_ref, value) {
                 var commit = _ref.commit;
 
+                console.log('act', actionName, value, _this);
                 commit(actionName, value);
                 if ((0, _isFunction3.default)(template[property].corollary)) {
                     template[property].corollary.call(_this);
@@ -1717,6 +1726,7 @@ function visitMutations(template) {
             var chain = (0, _cloneDeep3.default)(prefixes);
             if (key === 'set') {
                 mutations[actionName] = function (state, value) {
+                    console.log('mutate', actionName, state, value);
                     _applyData.validateProperty.call(value, template[property]);
                     (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];
@@ -1724,12 +1734,14 @@ function visitMutations(template) {
                 };
             } else if (key === 'clear') {
                 mutations[actionName] = function (state, value) {
+                    console.log('mutate', actionName, state, value);
                     (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];
                     }, state)[property].splice(0);
                 };
             } else if (key === 'add') {
                 mutations[actionName] = function (state, value) {
+                    console.log('mutate', actionName, state, value);
                     _applyData.validateProperty.call(value, template[property].items);
                     (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];
@@ -1737,6 +1749,7 @@ function visitMutations(template) {
                 };
             } else if (key === 'remove') {
                 mutations[actionName] = function (state, value) {
+                    console.log('mutate', actionName, state, value);
                     var array = (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];
                     }, state)[property];
@@ -1744,7 +1757,9 @@ function visitMutations(template) {
                     var index = array.indexOf(value);
                     if (index !== -1) {
                         array.splice(index, 1);
-                    } else {}
+                    } else {
+                        console.log('item ' + value + ' not found');
+                    }
                 };
             }
         });
@@ -4151,4 +4166,4 @@ module.exports = __webpack_require__(/*! ./src/index.js */34);
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=vuex-model-template.dev.js.map
+//# sourceMappingURL=vuex-model-template.instrumented.js.map
