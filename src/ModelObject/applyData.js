@@ -2,8 +2,6 @@ import _ from 'lodash';
 import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
-let stack = [];
-
 function throwError(type, data) {
     throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${stack.join('.')}'`);
 }
@@ -63,6 +61,7 @@ function validateProperty(template) {
     }
 }
 
+let prefixes = [];
 function validate(template) {
     let unexpectedProperties = _.difference(
         _.keys(this),
@@ -70,7 +69,7 @@ function validate(template) {
     );
 
     if (unexpectedProperties.length) {
-        throw new Error(`unexpected properties found in '${stack.join('.') || 'data'}': '${unexpectedProperties}'`);
+        throw new Error(`unexpected properties found in '${prefixes.join('.') || 'data'}': '${unexpectedProperties}'`);
     }
 
     let expectedProperties = _.intersection(
@@ -79,17 +78,44 @@ function validate(template) {
     );
 
     _.each(expectedProperties, expectedProperty => {
-        stack.push(expectedProperty);
+        prefixes.push(expectedProperty);
         this[expectedProperty]::validateProperty(template[expectedProperty]);
-        stack.splice(-1);
+        prefixes.splice(-1);
     });
 }
 
-export default function(template) {
+function apply(data, template) {
+    let expectedProperties = _.intersection(
+        _.keys(data),
+        _.keys(template)
+    );
+
+    _.defaults(this, data);
+
+    let defaultProperties = _.difference(
+        _.keys(template),
+        _.keys(data)
+    );
+
+    _.each(defaultProperties, property => {
+        if (template[property].type !== TYPE.Complex) {
+            this[property] = _.cloneDeep(template[property].defaultValue);
+        } else {
+            console.log('apply default value to complex type', property);
+            this[property] = {};
+
+            let propData = data && data[property];
+            this[property]::apply(propData, template[property].properties);
+        }
+    });
+}
+
+export default function(data, template) {
     if (!this) {
         return;
     }
 
-    stack = [];
-    this::validate(template);
+    prefixes = [];
+    data::validate(template);
+    this::apply(data, template);
 };

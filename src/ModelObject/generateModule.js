@@ -93,17 +93,16 @@ function visitMutations(template) {
 }
 
 export default function (template, module) {
-    // mapping action to module id
+    let mappedModule = {};
     _.forOwn(module, (value, key) => {
-        delete module[key];
-        module[`[${this.$moduleId}]:${key}`] = value;
+        mappedModule[`[${this.$moduleId}]:${key}`] = value;
     });
 
     this.$store.registerModule(this.$moduleId, {
         state: this,
         actions: {
             ...this::visitActions(template),
-            ...module
+            ...mappedModule
         },
         mutations: {
             ...this::visitMutations(template)
