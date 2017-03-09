@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("vuex"));
+		module.exports = factory(require("es6-promise"), require("vuex"));
 	else if(typeof define === 'function' && define.amd)
-		define(["vuex"], factory);
+		define(["es6-promise", "vuex"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("vuex")) : factory(root["vuex"]);
+		var a = typeof exports === 'object' ? factory(require("es6-promise"), require("vuex")) : factory(root["es6-promise"], root["vuex"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_100__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_100__, __WEBPACK_EXTERNAL_MODULE_101__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 101);
+/******/ 	return __webpack_require__(__webpack_require__.s = 102);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1573,6 +1573,8 @@ var _getActions2 = _interopRequireDefault(_getActions);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(/*! es6-promise */ 100).Promise : Promise;
+
 var prefixes = [];
 function visitUserActions(template) {
     var _this = this;
@@ -1588,7 +1590,7 @@ function visitUserActions(template) {
                     args[_key] = arguments[_key];
                 }
 
-                _mixin.act.call.apply(_mixin.act, [_this, actionName].concat(args));
+                return _Promise.resolve(_mixin.act.call.apply(_mixin.act, [_this, actionName].concat(args)));
             };
         });
         if (template[property].properties) {
@@ -1610,7 +1612,7 @@ function visitCustomActions(customModule) {
                 args[_key2] = arguments[_key2];
             }
 
-            _mixin.act.call.apply(_mixin.act, [_this2, actionName].concat(args));
+            return _Promise.resolve(_mixin.act.call.apply(_mixin.act, [_this2, actionName].concat(args)));
         };
     });
     return actions;
@@ -1857,7 +1859,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.mutate = mutate;
 exports.act = act;
 
-var _vuex = __webpack_require__(/*! vuex */ 100);
+var _vuex = __webpack_require__(/*! vuex */ 101);
 
 function mutate(name) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -4129,15 +4131,26 @@ module.exports = function(module) {
 /* 100 */
 /* unknown exports provided */
 /* all exports used */
-/*!***********************!*\
-  !*** external "vuex" ***!
-  \***********************/
+/*!******************************!*\
+  !*** external "es6-promise" ***!
+  \******************************/
 /***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE_100__;
 
 /***/ }),
 /* 101 */
+/* unknown exports provided */
+/* all exports used */
+/*!***********************!*\
+  !*** external "vuex" ***!
+  \***********************/
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_101__;
+
+/***/ }),
+/* 102 */
 /* unknown exports provided */
 /* all exports used */
 /*!****************************!*\

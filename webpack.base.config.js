@@ -6,7 +6,7 @@ let webpack = require('webpack');
 let LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 let babelSettings = JSON.stringify({
-    plugins: ['lodash', 'babel-plugin-transform-function-bind', 'transform-object-rest-spread'],
+    plugins: ['es6-promise', 'lodash', 'babel-plugin-transform-function-bind', 'transform-object-rest-spread'],
     presets: ['es2015'],
     cacheDirectory: true
 });
@@ -21,6 +21,7 @@ module.exports = {
         libraryTarget: 'umd'
     },
     externals: {
+        "es6-promise": "es6-promise",
         "vue": "vue",
         "vuex": "vuex"
     },

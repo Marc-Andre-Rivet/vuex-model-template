@@ -17,7 +17,7 @@ function visitUserActions(template) {
                 /*#if log*/
                 console.log('do', actionName, ...args);
                 /*#endif*/
-                this::act(actionName, ...args);
+                return Promise.resolve(this::act(actionName, ...args));
             };
         });
 
@@ -41,7 +41,7 @@ function visitCustomActions(customModule) {
             /*#if log*/
             console.log('do', actionName, ...args);
             /*#endif*/
-            this::act(actionName, ...args);
+            return Promise.resolve(this::act(actionName, ...args));
         };
     });
 
