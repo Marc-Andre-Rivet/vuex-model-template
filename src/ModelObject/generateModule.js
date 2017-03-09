@@ -14,12 +14,10 @@ function visitActions(template) {
             actions[actionName] = ({ commit }, value) => {
                 console.log('act', actionName, value, this);
                 commit(actionName, value);
-                _.each(template[property].sideEffects, sideEffect => {
-                    let sideEffectName = `[${this.$moduleId}]/${sideEffect.property}:${sideEffect.action}`;
 
-                    console.log('act/side-effect', sideEffectName, sideEffect.value);
-                    commit(sideEffectName, sideEffect.value);
-                });
+                if (_.isFunction(template[property].corollary)) {
+                    this::template[property].corollary();
+                }
             };
         });
 

@@ -14,7 +14,7 @@ export default function persist(target, template) {
                 target[key] = this[key]::persist({}, property.properties);
             }
         } else if (property.type === TYPE.ModelObject) {
-            if (property.transform) {
+            if (_.isFunction(property.transform)) {
                 target[key] = property.transform(this[key]);
             }
         } else {
