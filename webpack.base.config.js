@@ -3,10 +3,10 @@
 let path = require('path');
 let webpack = require('webpack');
 
-// let LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+let LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 let babelSettings = JSON.stringify({
-    plugins: [/*'lodash',*/ 'babel-plugin-transform-function-bind', 'transform-object-rest-spread'],
+    plugins: ['lodash', 'babel-plugin-transform-function-bind', 'transform-object-rest-spread'],
     presets: ['es2015'],
     cacheDirectory: true
 });
@@ -21,7 +21,7 @@ module.exports = {
         libraryTarget: 'umd'
     },
     externals: {
-        "lodash": "lodash",
+        // "lodash": "lodash",
         "vue": "vue",
         "vuex": "vuex"
     },
@@ -46,7 +46,7 @@ module.exports = {
         ]
     },
     'plugins': [
-        // new LodashModuleReplacementPlugin,
+        new LodashModuleReplacementPlugin,
         new webpack.optimize.OccurrenceOrderPlugin
     ]
 };
