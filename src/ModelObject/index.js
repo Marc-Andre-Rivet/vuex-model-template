@@ -2,9 +2,9 @@ import applyData from 'ModelObject/applyData';
 import generateActions from 'ModelObject/generateActions';
 import generateModule from 'ModelObject/generateModule';
 import generateObjectId from 'ModelObject/generateObjectId';
+import persist from 'ModelObject/persist';
 
 import Wrapper from 'ProxyWrapper';
-
 
 let wm = new WeakMap();
 
@@ -17,7 +17,8 @@ export default class ModelObject {
     ) {
         wm.set(this, {
             $moduleId: this::generateObjectId(),
-            $store: store
+            $store: store,
+            $template: template
         });
 
         this::applyData(data, template);
@@ -37,5 +38,13 @@ export default class ModelObject {
 
     get $store() {
         return wm.get(this).$store;
+    }
+
+    get $template() {
+        return wm.get(this).$template;
+    }
+
+    toJSON() {
+        return this::persist({}, this.$template);
     }
 }

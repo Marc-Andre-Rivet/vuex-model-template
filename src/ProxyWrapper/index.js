@@ -25,6 +25,7 @@ export default class ProxyWrapper {
                     key !== 'actions' &&
                     key !== '$moduleId' &&
                     key !== '$store' &&
+                    key !== '$template' &&
                     key !== 'then' &&
                     keys.indexOf(key) === -1
                 ) {
