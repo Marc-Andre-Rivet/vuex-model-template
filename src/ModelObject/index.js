@@ -16,7 +16,8 @@ export default class ModelObject {
         customActions = {}
     ) {
         wm.set(this, {
-            $moduleId: this::generateObjectId(),
+            $objectId: this::generateObjectId(),
+            $moduleId: this.constructor.name,
             $store: store,
             $template: template
         });

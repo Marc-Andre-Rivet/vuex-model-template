@@ -13,12 +13,7 @@ function visitUserActions(template) {
         _.forOwn(getActions(template[property].type), key => {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
-            actions[property][key] = actionName; //(...args) => {
-            //     /*#if log*/
-            //     console.log('do', actionName, ...args);
-            //     /*#endif*/
-            //     return Promise.resolve(this::act(actionName, ...args));
-            // };
+            actions[property][key] = actionName;
         });
 
         if (template[property].properties) {
@@ -37,12 +32,7 @@ function visitCustomActions(customModule) {
     _.forOwn(customModule, (value, key) => {
         let actionName = `[${this.$moduleId}]:${key}`;
 
-        actions[key] = actionName; //(...args) => {
-        //     /*#if log*/
-        //     console.log('do', actionName, ...args);
-        //     /*#endif*/
-        //     return Promise.resolve(this::act(actionName, ...args));
-        // };
+        actions[key] = actionName;
     });
 
     return actions;
@@ -62,17 +52,17 @@ export default function (template, customActions) {
             _.forOwn(actions, (action, actionName) => {
                 actionFunctions[key][actionName] = (...args) => {
                     /*#if log*/
-                    console.log('do', action, ...args);
+                    console.log('do', action, this, ...args);
                     /*#endif*/
-                    return Promise.resolve(this::act(action, ...args));
+                    return Promise.resolve(this::act(action, this, ...args));
                 };
             });
         } else if (_.isString(actions)) {
             actionFunctions[key] = (...args) => {
                 /*#if log*/
-                console.log('do', actions, ...args);
+                console.log('do', actions, this, ...args);
                 /*#endif*/
-                return Promise.resolve(this::act(actions, ...args));
+                return Promise.resolve(this::act(actions, this, ...args));
             };
         }
     });
