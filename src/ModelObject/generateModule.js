@@ -1,5 +1,5 @@
 import _ from 'lodash';
-// import { mutate } from 'vuex/mixin';
+import { mutate } from 'vuex/mixin';
 import { validateProperty } from 'ModelObject/applyData';
 import getActions from 'ModelObject/getActions';
 
@@ -106,11 +106,13 @@ function visitMutations(template) {
 let wm = {};
 export default function (template, module) {
     if (wm[this.$moduleId]) {
-        wm[this.$moduleId].push(this);
+        this::mutate(`add${this.$moduleId}`, wm[this.$moduleId], this);
         return;
     }
 
-    wm[this.$moduleId] = [this];
+    wm[this.$moduleId] = {
+        items: [this]
+    };
 
     let mappedModule = {};
     _.forOwn(module, (value, key) => {
@@ -118,16 +120,15 @@ export default function (template, module) {
     });
 
     return this.$store.registerModule(this.$moduleId, {
-        state: wm[this.$moduleId],
+        state: wm,
         actions: {
             ...this::visitActions(template),
             ...mappedModule
         },
         mutations: {
             ...this::visitMutations(template),
-            $add(state, obj) {
-                console.log('$add', state, obj);
-                state.push(obj);
+            [`add${this.$moduleId}`](state, [type, obj]) {
+                type.items.push(obj);
             }
         }
     });

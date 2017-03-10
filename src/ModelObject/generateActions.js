@@ -38,27 +38,13 @@ function visitCustomActions(customModule) {
     return actions;
 }
 
-export default function (template, customActions) {
-    let rawActions = {
-        ...this::visitUserActions(template),
-        ...this::visitCustomActions(customActions)
-    };
-
-    let actionFunctions = {};
+function buildActions(rawActions, target) {
     _.forOwn(rawActions, (actions, key) => {
         if (_.isObject(actions)) {
-            actionFunctions[key] = {};
-
-            _.forOwn(actions, (action, actionName) => {
-                actionFunctions[key][actionName] = (...args) => {
-                    /*#if log*/
-                    console.log('do', action, this, ...args);
-                    /*#endif*/
-                    return Promise.resolve(this::act(action, this, ...args));
-                };
-            });
+            target[key] = {};
+            this::buildActions(actions, target[key]);
         } else if (_.isString(actions)) {
-            actionFunctions[key] = (...args) => {
+            target[key] = (...args) => {
                 /*#if log*/
                 console.log('do', actions, this, ...args);
                 /*#endif*/
@@ -66,6 +52,14 @@ export default function (template, customActions) {
             };
         }
     });
+}
 
-    this.actions = actionFunctions;
+export default function (template, customActions) {
+    let rawActions = {
+        ...this::visitUserActions(template),
+        ...this::visitCustomActions(customActions)
+    };
+
+    this.actions = {};
+    this::buildActions(rawActions, this.actions);
 }

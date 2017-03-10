@@ -26,7 +26,7 @@ export default class ModelObject {
         this::generateActions(template, customActions);
 
         let proxy = Wrapper.getProxy(this);
-        this::generateModule(template, customActions);
+        proxy::generateModule(template, customActions);
 
         return proxy;
     }
