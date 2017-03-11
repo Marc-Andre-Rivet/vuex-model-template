@@ -45,7 +45,7 @@ module.exports = {
             }
         ]
     },
-    'plugins': [
+    plugins: [
         new LodashModuleReplacementPlugin,
         new webpack.optimize.OccurrenceOrderPlugin
     ]

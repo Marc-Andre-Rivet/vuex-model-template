@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import ModelObject from 'ModelObject';
 import TYPE from 'enumerations/type';
 
 export function validateProperty(template) {
@@ -30,11 +29,6 @@ export function validateProperty(template) {
             }
 
             this::validate(template.properties);
-            break;
-        case TYPE.ModelObject:
-            if (this && !(this instanceof ModelObject)) {
-                throwError(template.type, this);
-            }
             break;
         case TYPE.Number:
             if (!_.isNumber(this)) {

@@ -9,13 +9,12 @@ export default function persist(target, template) {
 
         if (property.type === TYPE.Object) {
             target[key] = this[key];
+            if (_.isFunction(property.transform)) {
+                target[key] = property.transform(this[key]);
+            }
         } else if (property.type === TYPE.Complex) {
             if (this[key]) {
                 target[key] = this[key]::persist({}, property.properties);
-            }
-        } else if (property.type === TYPE.ModelObject) {
-            if (_.isFunction(property.transform)) {
-                target[key] = property.transform(this[key]);
             }
         } else {
             target[key] = this[key];

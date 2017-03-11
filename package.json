@@ -24,9 +24,9 @@
     "webpack-preprocessor": "^0.1.4"
   },
   "scripts": {
-    "build.dev": "eslint src && webpack --config webpack.dev.config.js -d --devtool source-map --display-reasons --progress --bail",
-    "build.instrumented": "eslint src && webpack --config webpack.instrumented.config.js -d --devtool source-map --display-reasons --progress --bail",
-    "build.prod": "eslint src && webpack --config webpack.prod.config.js -p --devtool source-map --display-reasons --bail",
+    "build.dev": "eslint src && webpack --config webpack.dev.config.js --devtool source-map --display-reasons --progress --bail",
+    "build.instrumented": "eslint src && webpack --config webpack.instrumented.config.js --devtool source-map --display-reasons --progress --bail",
+    "build.prod": "eslint src && webpack --config webpack.prod.config.js --devtool source-map --display-reasons --bail",
     "build": "npm run build.dev && npm run build.instrumented && npm run build.prod"
   },
   "repository": {
