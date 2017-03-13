@@ -9,8 +9,8 @@ export default function persist(target, template) {
 
         if (property.type === TYPE.Object) {
             target[key] = this[key];
-            if (_.isFunction(property.transform)) {
-                target[key] = property.transform(this[key]);
+            if (_.isFunction(property.serialize)) {
+                target[key] = property.serialize(this[key]);
             }
         } else if (property.type === TYPE.Complex) {
             if (this[key]) {

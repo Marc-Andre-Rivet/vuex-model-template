@@ -1698,6 +1698,7 @@ var ModelObject = function () {
     _createClass(ModelObject, [{
         key: 'toJSON',
         value: function toJSON() {
+            console.log('ModelObject.toJSON', this);
             return _persist2.default.call(this, {}, this.$template);
         }
     }, {
