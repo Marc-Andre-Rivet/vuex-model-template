@@ -858,9 +858,7 @@ function act(name) {
 
     if (args.length === 0) {
         return (0, _vuex.mapActions)([name])[name].call(this);
-    } else if (args.length === 1) {
-        return (0, _vuex.mapActions)([name])[name].call(this, args.pop());
-    } else {
+    } else if (args.length) {
         return (0, _vuex.mapActions)([name])[name].call(this, args);
     }
 }
