@@ -653,6 +653,10 @@ var _type2 = _interopRequireDefault(_type);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var prefixes = [];
+function throwError(type, data) {
+    throw new Error('expected \'' + type.toString() + '\' but got \'' + (typeof data === 'undefined' ? 'undefined' : _typeof(data)) + '\' in \'' + prefixes.join('.') + '\'');
+}
 function validateProperty(template) {
     if ((0, _isUndefined3.default)(this)) {
         return;
@@ -699,10 +703,6 @@ function validateProperty(template) {
             throw new Error('unexpected type');
     }
 }
-function throwError(type, data) {
-    throw new Error('expected \'' + type.toString() + '\' but got \'' + (typeof data === 'undefined' ? 'undefined' : _typeof(data)) + '\' in \'' + prefixes.join('.') + '\'');
-}
-var prefixes = [];
 function validate(template) {
     var _this = this;
 

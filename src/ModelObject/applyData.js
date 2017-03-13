@@ -1,6 +1,12 @@
 import _ from 'lodash';
 import TYPE from 'enumerations/type';
 
+let prefixes = [];
+
+function throwError(type, data) {
+    throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${prefixes.join('.')}'`);
+}
+
 export function validateProperty(template) {
     if (_.isUndefined(this)) {
         return;
@@ -50,11 +56,6 @@ export function validateProperty(template) {
     }
 }
 
-function throwError(type, data) {
-    throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${prefixes.join('.')}'`);
-}
-
-let prefixes = [];
 function validate(template) {
     let unexpectedProperties = _.difference(
         _.keys(this),
