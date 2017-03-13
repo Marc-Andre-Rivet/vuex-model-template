@@ -1698,7 +1698,6 @@ var ModelObject = function () {
     _createClass(ModelObject, [{
         key: 'toJSON',
         value: function toJSON() {
-            console.log('ModelObject.toJSON', this);
             return _persist2.default.call(this, {}, this.$template);
         }
     }, {
@@ -1759,8 +1758,8 @@ function persist(target, template) {
         }
         if (property.type === _type2.default.Object) {
             target[key] = _this[key];
-            if ((0, _isFunction3.default)(property.transform)) {
-                target[key] = property.transform(_this[key]);
+            if ((0, _isFunction3.default)(property.serialize)) {
+                target[key] = property.serialize(_this[key]);
             }
         } else if (property.type === _type2.default.Complex) {
             if (_this[key]) {
