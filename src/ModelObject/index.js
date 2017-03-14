@@ -1,4 +1,5 @@
 import applyData from 'ModelObject/applyData';
+import deserialize from 'ModelObject/deserialize';
 import generateActions from 'ModelObject/generateActions';
 import generateModule from 'ModelObject/generateModule';
 import generateObjectId from 'ModelObject/generateObjectId';
@@ -41,6 +42,13 @@ export default class ModelObject {
 
     get $template() {
         return wm.get(this).$template;
+    }
+
+    static fromJSON(data, template) {
+        /*#if log*/
+        console.log('fromJSON', data, template);
+        /*#endif*/
+        return deserialize(data, template);
     }
 
     toJSON() {
