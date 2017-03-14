@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("es6-promise"), require("vuex")) : factory(root["es6-promise"], root["vuex"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_35__, __WEBPACK_EXTERNAL_MODULE_102__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_35__, __WEBPACK_EXTERNAL_MODULE_103__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 103);
+/******/ 	return __webpack_require__(__webpack_require__.s = 104);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -842,7 +842,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.mutate = mutate;
 exports.act = act;
 
-var _vuex = __webpack_require__(102);
+var _vuex = __webpack_require__(103);
 
 function mutate(name) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -1345,6 +1345,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _map2 = __webpack_require__(99);
+
+var _map3 = _interopRequireDefault(_map2);
+
 var _forOwn2 = __webpack_require__(8);
 
 var _forOwn3 = _interopRequireDefault(_forOwn2);
@@ -1357,6 +1361,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Promise = typeof Promise === 'undefined' ? __webpack_require__(35).Promise : Promise;
 
+var currentData = void 0;
 function visit(template) {
     var _this = this;
 
@@ -1367,19 +1372,32 @@ function visit(template) {
     }
     (0, _forOwn3.default)(template, function (property, key) {
         if (property.deserialize) {
-            promises.push(_Promise.resolve(property.deserialize(_this[key])).then(function (result) {
+            var _context;
+
+            promises.push(_Promise.resolve((_context = currentData, property.deserialize).call(_context, _this[key])).then(function (result) {
                 _this[key] = result;
             }));
         } else if (property.type === _type2.default.Complex) {
-            var _context;
+            var _context2;
 
-            (_context = _this[key], visit).call(_context, property.properties, promises);
+            (_context2 = _this[key], visit).call(_context2, property.properties, promises);
+        } else if (property.type === _type2.default.Array && property.items && property.items.deserialize) {
+            var items = _this[key];
+            var itemPromises = (0, _map3.default)(items, function (item) {
+                var _context3;
+
+                return _Promise.resolve((_context3 = currentData, property.items.deserialize).call(_context3, item));
+            });
+            promises.push(_Promise.all(itemPromises).then(function (results) {
+                _this[key] = results;
+            }));
         }
     });
     return promises;
 }
 
 exports.default = function (data, template) {
+    currentData = data;
     var promises = visit.call(data, template);
     return _Promise.all(promises).then(function () {
         return data;
@@ -1495,7 +1513,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _reduce2 = __webpack_require__(99);
+var _reduce2 = __webpack_require__(100);
 
 var _reduce3 = _interopRequireDefault(_reduce2);
 
@@ -2502,7 +2520,7 @@ function cloneBuffer(buffer, isDeep) {
 
 module.exports = cloneBuffer;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(101)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(102)(module)))
 
 /***/ }),
 /* 59 */
@@ -2666,7 +2684,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(100)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(101)))
 
 /***/ }),
 /* 66 */
@@ -3658,6 +3676,33 @@ module.exports = isUndefined;
 /***/ (function(module, exports) {
 
 /**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+module.exports = arrayMap;
+
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports) {
+
+/**
  * A specialized version of `_.reduce` for arrays without support for
  * iteratee shorthands.
  *
@@ -3686,7 +3731,7 @@ module.exports = arrayReduce;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports) {
 
 var g;
@@ -3713,7 +3758,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -3741,13 +3786,13 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_102__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_103__;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(36);
