@@ -21,7 +21,7 @@
     "vue": "^2.2.1",
     "vuex": "^2.2.1",
     "webpack": "^2.2.1",
-    "webpack-preprocessor": "^0.1.4"
+    "webpack-preprocessor": "^0.1.5"
   },
   "scripts": {
     "build.dev": "eslint src && webpack --config webpack.dev.config.js --devtool source-map --display-reasons --progress --bail",
