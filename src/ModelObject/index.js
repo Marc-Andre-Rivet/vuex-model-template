@@ -7,19 +7,18 @@ import persist from 'ModelObject/persist';
 
 import Wrapper from 'ProxyWrapper';
 
+let _store;
 let wm = new WeakMap();
 
 export default class ModelObject {
     constructor(
-        store,
         data,
         template,
         customActions = {}
     ) {
         wm.set(this, {
             $objectId: this::generateObjectId(),
-            $moduleId: this.constructor.name,
-            $store: store,
+            $store: _store,
             $template: template
         });
 
@@ -33,7 +32,7 @@ export default class ModelObject {
     }
 
     get $moduleId() {
-        return wm.get(this).$moduleId;
+        return this.constructor.name;
     }
 
     get $store() {
@@ -44,6 +43,10 @@ export default class ModelObject {
         return wm.get(this).$template;
     }
 
+    toJSON() {
+        return this::persist({}, this.$template);
+    }
+
     static fromJSON(data, template) {
         /*#if log*/
         console.log('fromJSON', data, template);
@@ -51,7 +54,11 @@ export default class ModelObject {
         return deserialize(data, template);
     }
 
-    toJSON() {
-        return this::persist({}, this.$template);
+    static use(store) {
+        if (!_store) {
+            _store = store;
+        } else {
+            throw new Error('store already set');
+        }
     }
 }

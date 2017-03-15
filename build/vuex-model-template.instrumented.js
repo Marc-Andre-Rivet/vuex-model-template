@@ -1321,7 +1321,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TYPE = exports.ModelObject = undefined;
+exports.TYPE = undefined;
 
 var _type = __webpack_require__(1);
 
@@ -1333,7 +1333,7 @@ var _ModelObject2 = _interopRequireDefault(_ModelObject);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ModelObject = exports.ModelObject = _ModelObject2.default;
+exports.default = _ModelObject2.default;
 var TYPE = exports.TYPE = _type2.default;
 
 /***/ }),
@@ -1761,18 +1761,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var _store = void 0;
 var wm = new WeakMap();
 
 var ModelObject = function () {
-    function ModelObject(store, data, template) {
-        var customActions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    function ModelObject(data, template) {
+        var customActions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
         _classCallCheck(this, ModelObject);
 
         wm.set(this, {
             $objectId: _generateObjectId2.default.call(this),
-            $moduleId: this.constructor.name,
-            $store: store,
+            $store: _store,
             $template: template
         });
         _applyData2.default.call(this, data, template);
@@ -1790,7 +1790,7 @@ var ModelObject = function () {
     }, {
         key: '$moduleId',
         get: function get() {
-            return wm.get(this).$moduleId;
+            return this.constructor.name;
         }
     }, {
         key: '$store',
@@ -1807,6 +1807,15 @@ var ModelObject = function () {
         value: function fromJSON(data, template) {
             console.log('fromJSON', data, template);
             return (0, _deserialize2.default)(data, template);
+        }
+    }, {
+        key: 'use',
+        value: function use(store) {
+            if (!_store) {
+                _store = store;
+            } else {
+                throw new Error('store already set');
+            }
         }
     }]);
 

@@ -1,5 +1,5 @@
 import __TYPE from 'enumerations/type';
-import __ModelObject from 'ModelObject';
+import ModelObject from 'ModelObject';
 
-export const ModelObject = __ModelObject;
+export default ModelObject;
 export const TYPE = __TYPE;
