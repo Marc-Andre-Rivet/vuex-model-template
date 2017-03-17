@@ -1373,30 +1373,43 @@ function visit(template) {
         return;
     }
     (0, _forOwn3.default)(template, function (property, key) {
-        if (property.deserialize) {
-            var _context;
+        if (property.type === _type2.default.Array && property.items && property.items.deserialize) {
+            console.log('deserialize array property', key, _this[key]);
+            var promise = void 0;
+            if (property.deserialize) {
+                var _context;
+
+                promise = _Promise.resolve((_context = currentData, property.deserialize).call(_context, _this[key])).then(function (result) {
+                    console.log('deserialized property', key, result);
+                    _this[key] = result;
+                });
+                promises.push(promise);
+            } else {
+                promise = _Promise.resolve(_this[key]);
+            }
+            return promise.then(function (items) {
+                var itemPromises = (0, _map3.default)(items, function (item) {
+                    var _context2;
+
+                    return _Promise.resolve((_context2 = currentData, property.items.deserialize).call(_context2, item));
+                });
+                promises.push(_Promise.all(itemPromises).then(function (results) {
+                    console.log('deserialized array property', key, results);
+                    _this[key] = results;
+                }));
+            });
+        } else if (property.deserialize) {
+            var _context3;
 
             console.log('deserialize property', key);
-            promises.push(_Promise.resolve((_context = currentData, property.deserialize).call(_context, _this[key])).then(function (result) {
+            promises.push(_Promise.resolve((_context3 = currentData, property.deserialize).call(_context3, _this[key])).then(function (result) {
                 console.log('deserialized property', key, result);
                 _this[key] = result;
             }));
         } else if (property.type === _type2.default.Complex) {
-            var _context2;
+            var _context4;
 
-            (_context2 = _this[key], visit).call(_context2, property.properties, promises);
-        } else if (property.type === _type2.default.Array && property.items && property.items.deserialize) {
-            console.log('deserialize array property', key, _this[key]);
-            var items = _this[key];
-            var itemPromises = (0, _map3.default)(items, function (item) {
-                var _context3;
-
-                return _Promise.resolve((_context3 = currentData, property.items.deserialize).call(_context3, item));
-            });
-            promises.push(_Promise.all(itemPromises).then(function (results) {
-                console.log('deserialized array property', key, results);
-                _this[key] = results;
-            }));
+            (_context4 = _this[key], visit).call(_context4, property.properties, promises);
         }
     });
     return promises;
@@ -1611,7 +1624,7 @@ function visitActions(template) {
                 console.log('act', actionName, target, value);
                 commit(actionName, [target, value]);
                 if ((0, _isFunction3.default)(template[property].corollary)) {
-                    template[property].corollary.call(target);
+                    template[property].corollary.call(target, value);
                 }
             };
         });

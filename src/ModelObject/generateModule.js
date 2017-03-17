@@ -19,7 +19,7 @@ function visitActions(template) {
                 commit(actionName, [target, value]);
 
                 if (_.isFunction(template[property].corollary)) {
-                    target::template[property].corollary();
+                    target::template[property].corollary(value);
                 }
             };
         });
