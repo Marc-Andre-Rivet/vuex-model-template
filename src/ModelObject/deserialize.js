@@ -27,18 +27,18 @@ function visit(template, promises = []) {
                 promise = Promise.resolve(this[key]);
             }
 
-            return promise.then(items => {
+            promises.push(promise.then(items => {
                 let itemPromises = _.map(items, item => {
                     return Promise.resolve(currentData::property.items.deserialize(item));
                 });
 
-                promises.push(Promise.all(itemPromises).then(results => {
+                return Promise.all(itemPromises).then(results => {
                     /*#if log*/
                     console.log('deserialized array property', key, results);
                     /*#endif*/
                     this[key] = results;
-                }));
-            });
+                });
+            }));
         } else if (property.deserialize) {
             /*#if log*/
             console.log('deserialize property', key);

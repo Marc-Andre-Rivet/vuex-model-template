@@ -1383,16 +1383,16 @@ function visit(template) {
             } else {
                 promise = _Promise.resolve(_this[key]);
             }
-            return promise.then(function (items) {
+            promises.push(promise.then(function (items) {
                 var itemPromises = (0, _map3.default)(items, function (item) {
                     var _context2;
 
                     return _Promise.resolve((_context2 = currentData, property.items.deserialize).call(_context2, item));
                 });
-                promises.push(_Promise.all(itemPromises).then(function (results) {
+                return _Promise.all(itemPromises).then(function (results) {
                     _this[key] = results;
-                }));
-            });
+                });
+            }));
         } else if (property.deserialize) {
             var _context3;
 
