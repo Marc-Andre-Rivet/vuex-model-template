@@ -21,8 +21,9 @@ function visit(template, promises = []) {
                     console.log('deserialized property', key, result);
                     /*#endif*/
                     this[key] = result;
+
+                    return result;
                 });
-                promises.push(promise);
             } else {
                 promise = Promise.resolve(this[key]);
             }

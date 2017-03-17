@@ -1382,8 +1382,8 @@ function visit(template) {
                 promise = _Promise.resolve((_context = currentData, property.deserialize).call(_context, _this[key])).then(function (result) {
                     console.log('deserialized property', key, result);
                     _this[key] = result;
+                    return result;
                 });
-                promises.push(promise);
             } else {
                 promise = _Promise.resolve(_this[key]);
             }
