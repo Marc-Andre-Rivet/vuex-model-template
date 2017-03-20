@@ -812,9 +812,12 @@ var ProxyWrapper = function () {
             target = new Proxy(target, {
                 get: function get(t, key) {
                     if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
-                    key !== '__ob__' && // protection for VueJS models
-                    key !== '_isVue' && key !== 'toJSON' && // JSON.stringify
-                    key !== 'actions' && key !== '$moduleId' && key !== '$store' && key !== '$template' && key !== 'then' && keys.indexOf(key) === -1) {
+                    key !== '__ob__' && // VueJS models
+                    key !== '_isVue' && // VueJS models
+                    key !== 'actions' && // vuex-model-template
+                    key !== 'then' && // promises & thenable objects
+                    key !== 'toJSON' && // JSON.stringify
+                    key.length && key[0] !== '$' && keys.indexOf(key) === -1) {
                         throw new Error('unknown property \'' + key + '\'');
                     }
                     return t[key];
