@@ -52,7 +52,14 @@ function visitMutations(template) {
                     /*#endif*/
 
                     value::validateProperty(template[property]);
-                    _.reduce(chain, (t, prop) => t[prop], target)[property] = value;
+
+                    let array = _.reduce(chain, (t, prop) => t[prop], target)[property];
+                    if (_.isArray(array)) {
+                        array.splice(0);
+                        array.push(...value);
+                    } else {
+                        _.reduce(chain, (t, prop) => t[prop], target)[property] = value;
+                    }
                 };
             } else if (key === 'clear') {
                 mutations[actionName] = (state, args) => {

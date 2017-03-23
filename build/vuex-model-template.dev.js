@@ -124,34 +124,6 @@ module.exports = copyObject;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _ProxyWrapper = __webpack_require__(18);
-
-var _ProxyWrapper2 = _interopRequireDefault(_ProxyWrapper);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _ProxyWrapper2.default.getProxy({
-    Any: Symbol('Any'),
-    Array: Symbol('Array'),
-    Boolean: Symbol('Boolean'),
-    Complex: Symbol('Complex'),
-    Number: Symbol('Number'),
-    Object: Symbol('Object'),
-    String: Symbol('String'),
-    Symbol: Symbol('Symbol')
-});
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 /**
@@ -181,6 +153,34 @@ var isArray = Array.isArray;
 
 module.exports = isArray;
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _ProxyWrapper = __webpack_require__(18);
+
+var _ProxyWrapper2 = _interopRequireDefault(_ProxyWrapper);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _ProxyWrapper2.default.getProxy({
+    Any: Symbol('Any'),
+    Array: Symbol('Array'),
+    Boolean: Symbol('Boolean'),
+    Complex: Symbol('Complex'),
+    Number: Symbol('Number'),
+    Object: Symbol('Object'),
+    String: Symbol('String'),
+    Symbol: Symbol('Symbol')
+});
 
 /***/ }),
 /* 3 */
@@ -625,7 +625,7 @@ var _each2 = __webpack_require__(12);
 
 var _each3 = _interopRequireDefault(_each2);
 
-var _isArray2 = __webpack_require__(2);
+var _isArray2 = __webpack_require__(1);
 
 var _isArray3 = _interopRequireDefault(_isArray2);
 
@@ -647,7 +647,7 @@ exports.default = function (data, template) {
     apply.call(this, data, template);
 };
 
-var _type = __webpack_require__(1);
+var _type = __webpack_require__(2);
 
 var _type2 = _interopRequireDefault(_type);
 
@@ -755,7 +755,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _type = __webpack_require__(1);
+var _type = __webpack_require__(2);
 
 var _type2 = _interopRequireDefault(_type);
 
@@ -871,7 +871,7 @@ function act(name) {
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(2);
+var isArray = __webpack_require__(1);
 
 /**
  * Casts `value` as an array if it's not one.
@@ -1276,7 +1276,7 @@ module.exports = isArrayLikeObject;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(6),
-    isArray = __webpack_require__(2),
+    isArray = __webpack_require__(1),
     isObjectLike = __webpack_require__(9);
 
 /** `Object#toString` result references. */
@@ -1325,7 +1325,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TYPE = undefined;
 
-var _type = __webpack_require__(1);
+var _type = __webpack_require__(2);
 
 var _type2 = _interopRequireDefault(_type);
 
@@ -1357,7 +1357,7 @@ var _forOwn2 = __webpack_require__(8);
 
 var _forOwn3 = _interopRequireDefault(_forOwn2);
 
-var _type = __webpack_require__(1);
+var _type = __webpack_require__(2);
 
 var _type2 = _interopRequireDefault(_type);
 
@@ -1529,6 +1529,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _isArray2 = __webpack_require__(1);
+
+var _isArray3 = _interopRequireDefault(_isArray2);
+
 var _reduce2 = __webpack_require__(100);
 
 var _reduce3 = _interopRequireDefault(_reduce2);
@@ -1596,6 +1600,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var prefixes = [];
 function visitActions(template) {
     var _this = this;
@@ -1642,9 +1648,17 @@ function visitMutations(template) {
                         value = _args[1];
 
                     _applyData.validateProperty.call(value, template[property]);
-                    (0, _reduce3.default)(chain, function (t, prop) {
+                    var array = (0, _reduce3.default)(chain, function (t, prop) {
                         return t[prop];
-                    }, target)[property] = value;
+                    }, target)[property];
+                    if ((0, _isArray3.default)(array)) {
+                        array.splice(0);
+                        array.push.apply(array, _toConsumableArray(value));
+                    } else {
+                        (0, _reduce3.default)(chain, function (t, prop) {
+                            return t[prop];
+                        }, target)[property] = value;
+                    }
                 };
             } else if (key === 'clear') {
                 mutations[actionName] = function (state, args) {
@@ -1841,7 +1855,7 @@ var _forOwn3 = _interopRequireDefault(_forOwn2);
 
 exports.default = persist;
 
-var _type = __webpack_require__(1);
+var _type = __webpack_require__(2);
 
 var _type2 = _interopRequireDefault(_type);
 
@@ -2041,7 +2055,7 @@ var Stack = __webpack_require__(43),
     initCloneArray = __webpack_require__(73),
     initCloneByTag = __webpack_require__(74),
     initCloneObject = __webpack_require__(75),
-    isArray = __webpack_require__(2),
+    isArray = __webpack_require__(1),
     isBuffer = __webpack_require__(95),
     isObject = __webpack_require__(3),
     keys = __webpack_require__(4);
@@ -2955,7 +2969,7 @@ module.exports = initCloneObject;
 
 var Symbol = __webpack_require__(44),
     isArguments = __webpack_require__(92),
-    isArray = __webpack_require__(2);
+    isArray = __webpack_require__(1);
 
 /** Built-in value references. */
 var spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
