@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
+let __objectProperties = Object.getOwnPropertyNames(Object.prototype);
 let wm = new WeakMap();
+
 export default class ProxyWrapper {
     static getProxy(target) {
         /*#if dev*/
@@ -18,7 +20,8 @@ export default class ProxyWrapper {
 
         target = new Proxy(target, {
             get(t, key) {
-                if (typeof key !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
+                if (__objectProperties.indexOf(key) === -1 &&
+                    typeof key !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
                     key !== '__ob__' && // VueJS models
                     key !== '_isVue' && // VueJS models
                     key !== 'actions' && // vuex-model-template

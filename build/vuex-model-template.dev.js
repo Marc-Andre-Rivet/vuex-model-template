@@ -792,6 +792,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var __objectProperties = Object.getOwnPropertyNames(Object.prototype);
 var wm = new WeakMap();
 
 var ProxyWrapper = function () {
@@ -811,7 +812,7 @@ var ProxyWrapper = function () {
             });
             target = new Proxy(target, {
                 get: function get(t, key) {
-                    if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
+                    if (__objectProperties.indexOf(key) === -1 && (typeof key === 'undefined' ? 'undefined' : _typeof(key)) !== 'symbol' && // synthetic toString, etc. functions (possibly related to VueJS)
                     key !== '__ob__' && // VueJS models
                     key !== '_isVue' && // VueJS models
                     key !== 'actions' && // vuex-model-template
