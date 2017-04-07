@@ -708,7 +708,8 @@ function validate(template) {
 
     var unexpectedProperties = (0, _difference3.default)((0, _keys3.default)(this), (0, _keys3.default)(template));
     if (unexpectedProperties.length) {
-        throw new Error('unexpected properties found in \'' + (prefixes.join('.') || 'data') + '\': \'' + unexpectedProperties + '\'');
+        var message = 'unexpected properties found in \'' + (prefixes.join('.') || 'data') + '\': \'' + unexpectedProperties + '\'';
+        throw new Error(message);
     }
     var expectedProperties = (0, _intersection3.default)((0, _keys3.default)(this), (0, _keys3.default)(template));
     (0, _each3.default)(expectedProperties, function (expectedProperty) {

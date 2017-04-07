@@ -62,9 +62,12 @@ function validate(template) {
         _.keys(template)
     );
 
+    /*#if dev*/
     if (unexpectedProperties.length) {
-        throw new Error(`unexpected properties found in '${prefixes.join('.') || 'data'}': '${unexpectedProperties}'`);
+        let message = `unexpected properties found in '${prefixes.join('.') || 'data'}': '${unexpectedProperties}'`;
+        throw new Error(message);
     }
+    /* #endif */
 
     let expectedProperties = _.intersection(
         _.keys(this),
