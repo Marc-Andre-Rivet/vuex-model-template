@@ -1896,7 +1896,9 @@ function persist(target, template) {
                 target[key] = property.serialize(_this[key]);
             }
         } else if (property.type === _type2.default.Complex) {
-            if (_this[key]) {
+            if ((0, _isFunction3.default)(property.serialize)) {
+                target[key] = property.serialize(_this[key]);
+            } else if (_this[key]) {
                 var _context;
 
                 target[key] = (_context = _this[key], persist).call(_context, {}, property.properties);
