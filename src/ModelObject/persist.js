@@ -13,7 +13,9 @@ export default function persist(target, template) {
                 target[key] = property.serialize(this[key]);
             }
         } else if (property.type === TYPE.Complex) {
-            if (this[key]) {
+            if (_.isFunction(property.serialize)) {
+                target[key] = property.serialize(this[key]);
+            } else if (this[key]) {
                 target[key] = this[key]::persist({}, property.properties);
             }
         } else {
