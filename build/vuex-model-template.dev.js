@@ -667,6 +667,8 @@ function validateProperty(template) {
         case _type2.default.Array:
             if (!(0, _isArray3.default)(this)) {
                 throwError(template.type, this);
+            } else if (!template.items) {
+                break;
             } else {
                 (0, _each3.default)(this, function (item) {
                     validateProperty.call(item, template.items);

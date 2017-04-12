@@ -18,6 +18,8 @@ export function validateProperty(template) {
         case TYPE.Array:
             if (!_.isArray(this)) {
                 throwError(template.type, this);
+            } else if (!template.items) {
+                break;
             } else {
                 _.each(this, item => {
                     item::validateProperty(template.items);
