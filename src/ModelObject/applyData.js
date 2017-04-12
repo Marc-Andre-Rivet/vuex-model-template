@@ -12,6 +12,10 @@ export function validateProperty(template) {
         return;
     }
 
+    if (!template) {
+        return;
+    }
+
     switch (template.type) {
         case TYPE.Any:
             break;

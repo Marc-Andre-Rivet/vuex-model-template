@@ -661,6 +661,9 @@ function validateProperty(template) {
     if ((0, _isUndefined3.default)(this)) {
         return;
     }
+    if (!template) {
+        return;
+    }
     switch (template.type) {
         case _type2.default.Any:
             break;
