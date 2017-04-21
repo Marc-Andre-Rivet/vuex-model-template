@@ -4,7 +4,7 @@ Generation of vuex module from object template.
 Alpha version. More information coming soon.
 
 ## Objective
-Working with Vuex, I spent a lot of time writing and perfectioning boilerplate code, logic surrounding calls for actions/mutations and managing side effects.
+Working with Vuex, I spent a lot of time writing and perfecting boilerplate code, logic surrounding calls for actions/mutations and managing side effects.
 
 This is my attempt at simplifying the boilerplate generation while adding support for:
     * enforcing expected properties
