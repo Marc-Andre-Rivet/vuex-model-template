@@ -223,7 +223,7 @@ module.exports = isObject;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(11);
+var overArg = __webpack_require__(12);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeKeys = overArg(Object.keys, Object);
@@ -235,7 +235,7 @@ module.exports = nativeKeys;
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var eq = __webpack_require__(13);
+var eq = __webpack_require__(14);
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -353,160 +353,6 @@ module.exports = forOwn;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-/**
- * A specialized version of `_.map` for arrays without support for iteratee
- * shorthands.
- *
- * @private
- * @param {Array} [array] The array to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns the new mapped array.
- */
-function arrayMap(array, iteratee) {
-  var index = -1,
-      length = array == null ? 0 : array.length,
-      result = Array(length);
-
-  while (++index < length) {
-    result[index] = iteratee(array[index], index, array);
-  }
-  return result;
-}
-
-module.exports = arrayMap;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-
-module.exports = overArg;
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-/**
- * A specialized version of `_.forEach` for arrays without support for
- * iteratee shorthands.
- *
- * @private
- * @param {Array} [array] The array to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns `array`.
- */
-function arrayEach(array, iteratee) {
-  var index = -1,
-      length = array == null ? 0 : array.length;
-
-  while (++index < length) {
-    if (iteratee(array[index], index, array) === false) {
-      break;
-    }
-  }
-  return array;
-}
-
-module.exports = arrayEach;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-/**
- * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * comparison between two values to determine if they are equivalent.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
- * @example
- *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
- *
- * _.eq(object, object);
- * // => true
- *
- * _.eq(object, other);
- * // => false
- *
- * _.eq('a', 'a');
- * // => true
- *
- * _.eq('a', Object('a'));
- * // => false
- *
- * _.eq(NaN, NaN);
- * // => true
- */
-function eq(value, other) {
-  return value === other || (value !== value && other !== other);
-}
-
-module.exports = eq;
-
-
-/***/ }),
-/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(6),
@@ -546,6 +392,160 @@ function isFunction(value) {
 }
 
 module.exports = isFunction;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+/**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+module.exports = arrayMap;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
+
+module.exports = arrayEach;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+module.exports = eq;
 
 
 /***/ }),
@@ -593,6 +593,10 @@ var _cloneDeep2 = __webpack_require__(31);
 
 var _cloneDeep3 = _interopRequireDefault(_cloneDeep2);
 
+var _isFunction2 = __webpack_require__(9);
+
+var _isFunction3 = _interopRequireDefault(_isFunction2);
+
 var _intersection2 = __webpack_require__(91);
 
 var _intersection3 = _interopRequireDefault(_intersection2);
@@ -621,7 +625,7 @@ var _isBoolean2 = __webpack_require__(94);
 
 var _isBoolean3 = _interopRequireDefault(_isBoolean2);
 
-var _each2 = __webpack_require__(12);
+var _each2 = __webpack_require__(13);
 
 var _each3 = _interopRequireDefault(_each2);
 
@@ -731,7 +735,11 @@ function apply(data, template) {
     var defaultProperties = (0, _difference3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
     (0, _each3.default)(defaultProperties, function (property) {
         if (template[property].type !== _type2.default.Complex) {
-            _this2[property] = (0, _cloneDeep3.default)(template[property].defaultValue);
+            if ((0, _isFunction3.default)(template[property].defaultValue)) {
+                _this2[property] = template[property].defaultValue();
+            } else {
+                _this2[property] = (0, _cloneDeep3.default)(template[property].defaultValue);
+            }
         } else {
             var _context2;
 
@@ -1006,7 +1014,7 @@ module.exports = arrayIncludesWith;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseAssignValue = __webpack_require__(25),
-    eq = __webpack_require__(13);
+    eq = __webpack_require__(14);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -1243,7 +1251,7 @@ module.exports = __webpack_require__(86);
 /***/ (function(module, exports, __webpack_require__) {
 
 var isArrayLike = __webpack_require__(93),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /**
  * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -1283,7 +1291,7 @@ module.exports = isArrayLikeObject;
 
 var baseGetTag = __webpack_require__(6),
     isArray = __webpack_require__(1),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var stringTag = '[object String]';
@@ -1453,7 +1461,7 @@ var _forOwn2 = __webpack_require__(8);
 
 var _forOwn3 = _interopRequireDefault(_forOwn2);
 
-var _each2 = __webpack_require__(12);
+var _each2 = __webpack_require__(13);
 
 var _each3 = _interopRequireDefault(_each2);
 
@@ -1551,7 +1559,7 @@ var _extend2 = __webpack_require__(32);
 
 var _extend3 = _interopRequireDefault(_extend2);
 
-var _isFunction2 = __webpack_require__(14);
+var _isFunction2 = __webpack_require__(9);
 
 var _isFunction3 = _interopRequireDefault(_isFunction2);
 
@@ -1559,7 +1567,7 @@ var _forOwn2 = __webpack_require__(8);
 
 var _forOwn3 = _interopRequireDefault(_forOwn2);
 
-var _each2 = __webpack_require__(12);
+var _each2 = __webpack_require__(13);
 
 var _each3 = _interopRequireDefault(_each2);
 
@@ -1851,7 +1859,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _isFunction2 = __webpack_require__(14);
+var _isFunction2 = __webpack_require__(9);
 
 var _isFunction3 = _interopRequireDefault(_isFunction2);
 
@@ -2246,7 +2254,7 @@ module.exports = baseCreate;
 var SetCache = __webpack_require__(20),
     arrayIncludes = __webpack_require__(22),
     arrayIncludesWith = __webpack_require__(23),
-    arrayMap = __webpack_require__(10),
+    arrayMap = __webpack_require__(11),
     baseUnary = __webpack_require__(27),
     cacheHas = __webpack_require__(28);
 
@@ -2407,7 +2415,7 @@ module.exports = baseForOwn;
 var SetCache = __webpack_require__(20),
     arrayIncludes = __webpack_require__(22),
     arrayIncludesWith = __webpack_require__(23),
-    arrayMap = __webpack_require__(10),
+    arrayMap = __webpack_require__(11),
     baseUnary = __webpack_require__(27),
     cacheHas = __webpack_require__(28);
 
@@ -2674,7 +2682,7 @@ module.exports = createBaseFor;
 /* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var eq = __webpack_require__(13);
+var eq = __webpack_require__(14);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -2737,7 +2745,7 @@ module.exports = freeGlobal;
 /* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(11);
+var overArg = __webpack_require__(12);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeKeys = overArg(Object.keys, Object);
@@ -2794,7 +2802,7 @@ module.exports = getValue;
 /* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(11);
+var overArg = __webpack_require__(12);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -3451,7 +3459,7 @@ module.exports = identity;
 /* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayMap = __webpack_require__(10),
+var arrayMap = __webpack_require__(11),
     baseIntersection = __webpack_require__(55),
     baseRest = __webpack_require__(7),
     castArrayLikeObject = __webpack_require__(56);
@@ -3511,7 +3519,7 @@ module.exports = stubFalse;
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(14),
+var isFunction = __webpack_require__(9),
     isLength = __webpack_require__(96);
 
 /**
@@ -3551,7 +3559,7 @@ module.exports = isArrayLike;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(6),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var boolTag = '[object Boolean]';
@@ -3651,7 +3659,7 @@ module.exports = isLength;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(6),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var numberTag = '[object Number]';

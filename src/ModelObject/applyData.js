@@ -95,7 +95,11 @@ function apply(data, template) {
 
     _.each(defaultProperties, property => {
         if (template[property].type !== TYPE.Complex) {
-            this[property] = _.cloneDeep(template[property].defaultValue);
+            if (_.isFunction(template[property].defaultValue)) {
+                this[property] = template[property].defaultValue();
+            } else {
+                this[property] = _.cloneDeep(template[property].defaultValue);
+            }
         } else {
             /*#if log*/
             console.log('apply default value to complex type', property);
