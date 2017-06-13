@@ -22,7 +22,10 @@ export default class ModelObject {
             $template: template
         });
 
-        this::applyData(data, template);
+        if (this::applyData(data, template)) {
+            throw new Error('applyData needs to resolve default values asynchronously. Use \'fromRaw\' before using the consrtructor');
+        }
+
         this::generateActions(template, customActions);
 
         let proxy = Wrapper.getProxy(this);
@@ -48,10 +51,23 @@ export default class ModelObject {
     }
 
     static fromJSON(data, template) {
+        console.warn(`'fromJSON' deprecated, use 'hydrate' instead`);
+        return ModelObject.hydrate(data, template);
+    }
+
+    static hydrate(data, template) {
         /*#if log*/
-        console.log('fromJSON', data, template);
+        console.log('hydrate', data, template);
         /*#endif*/
+
         return deserialize(data, template);
+    }
+
+    static fromRaw(data, template) {
+        return ModelObject.hydrate(data, template).then(raw => {
+            let dest = {};
+            return Promise.resolve(dest::applyData(raw, template)).then(() => dest);
+        });
     }
 
     static use(store) {

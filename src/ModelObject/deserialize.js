@@ -3,7 +3,7 @@ import TYPE from 'enumerations/type';
 
 let currentData;
 
-function visit(template, promises = []) {
+function visit(rawData, template, promises = []) {
     if (!this) {
         return;
     }
@@ -16,7 +16,7 @@ function visit(template, promises = []) {
 
             let promise;
             if (property.deserialize) {
-                promise = Promise.resolve(currentData::property.deserialize(this[key])).then(result => {
+                promise = Promise.resolve(currentData::property.deserialize(this[key], rawData)).then(result => {
                     /*#if log*/
                     console.log('deserialized property', key, result);
                     /*#endif*/
@@ -30,7 +30,7 @@ function visit(template, promises = []) {
 
             promises.push(promise.then(items => {
                 let itemPromises = _.map(items, item => {
-                    return Promise.resolve(currentData::property.items.deserialize(item));
+                    return Promise.resolve(currentData::property.items.deserialize(item, rawData));
                 });
 
                 return Promise.all(itemPromises).then(results => {
@@ -44,14 +44,14 @@ function visit(template, promises = []) {
             /*#if log*/
             console.log('deserialize property', key);
             /*#endif*/
-            promises.push(Promise.resolve(currentData::property.deserialize(this[key])).then(result => {
+            promises.push(Promise.resolve(currentData::property.deserialize(this[key], rawData)).then(result => {
                 /*#if log*/
                 console.log('deserialized property', key, result);
                 /*#endif*/
                 this[key] = result;
             }));
         } else if (property.type === TYPE.Complex) {
-            this[key]::visit(property.properties, promises);
+            this[key]::visit(rawData, property.properties, promises);
         }
     });
 
@@ -60,7 +60,7 @@ function visit(template, promises = []) {
 
 export default (data, template) => {
     currentData = data;
-    let promises = data::visit(template);
+    let promises = data::visit(data, template);
 
     /*#if log*/
     if (promises && promises.length) {

@@ -87,7 +87,7 @@ function validate(template) {
     });
 }
 
-function apply(data, template) {
+function apply(rawData, data, template, promises = []) {
     let defaultProperties = _.difference(
         _.keys(template),
         _.keys(data)
@@ -96,7 +96,15 @@ function apply(data, template) {
     _.each(defaultProperties, property => {
         if (template[property].type !== TYPE.Complex) {
             if (_.isFunction(template[property].defaultValue)) {
-                this[property] = template[property].defaultValue();
+                let value = template[property].defaultValue(rawData);
+
+                if (value.then) {
+                    promises.push(Promise.resolve(value).then(result => {
+                        this[property] = result;
+                    }));
+                } else {
+                    this[property] = value;
+                }
             } else {
                 this[property] = _.cloneDeep(template[property].defaultValue);
             }
@@ -107,7 +115,7 @@ function apply(data, template) {
             this[property] = {};
 
             let propData = data && data[property];
-            this[property]::apply(propData, template[property].properties);
+            this[property]::apply(rawData, propData, template[property].properties, promises);
         }
     });
 
@@ -121,9 +129,11 @@ function apply(data, template) {
             /*#if log*/
             console.log('apply default to properties of complex type', property);
             /*#endif*/
-            this[property]::apply(data[property], template[property].properties);
+            this[property]::apply(rawData, data[property], template[property].properties, promises);
         }
     });
+
+    return promises;
 }
 
 export default function(data, template) {
@@ -135,5 +145,16 @@ export default function(data, template) {
     data::validate(template);
 
     _.defaults(this, data);
-    this::apply(data, template);
+    let promises = this::apply(data, data, template);
+
+    /*#if log*/
+    if (promises && promises.length) {
+        console.log('applying defaults', data);
+    }
+    /*#endif*/
+
+    if (promises && promises.length) {
+        return Promise.all(promises).then(() => data);
+    }
+
 }
