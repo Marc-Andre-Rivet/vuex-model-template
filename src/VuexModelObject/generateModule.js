@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { mutate } from 'vuex/mixin';
 import { validateProperty } from 'ModelObject/applyData';
-import getActions from 'ModelObject/getActions';
+import getActions from 'VuexModelObject/getActions';
 
 let prefixes = [];
 function visitActions(template) {

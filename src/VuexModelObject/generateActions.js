@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { act } from 'vuex/mixin';
-import getActions from 'ModelObject/getActions';
+import getActions from 'VuexModelObject/getActions';
 
 let prefixes = [];
 function visitUserActions(template) {
