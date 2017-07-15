@@ -7,11 +7,11 @@ Alpha version. More information coming soon.
 Working with Vuex, I spent a lot of time writing and perfecting boilerplate code, logic surrounding calls for actions/mutations and managing side effects.
 
 This is my attempt at simplifying the boilerplate generation while adding support for:
-    * enforcing expected properties
-    * type validation
-    * auto-generated actions accessible directly on the object's instance
-    * automatic side-effects management
-    * template based serialization & deserialization
+* enforcing expected properties
+* type validation
+* auto-generated actions accessible directly on the object's instance
+* automatic side-effects management
+* template based serialization & deserialization
 
 ## Getting Started
 ### Webpack Configuration
