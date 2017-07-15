@@ -23,13 +23,14 @@ mangle: {
 }
 ```
 
-### Code
+### Setup Code
 ```javascript
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexModel, { TYPE } from 'vuex-model-template';
-
 Vue.use(Vuex);
+
+import VuexModelObject, { TYPE } from 'vuex-model-template';
+
 const store = Vuex.Store({
     actions: {},
     mutations: {},
@@ -37,23 +38,7 @@ const store = Vuex.Store({
 });
 
 VuexModel.use(store);
-
-let template = {
-    bar1: { type: TYPE.Any },
-    bar2: { type: TYPE.Array, items: { type: TYPE.Any } },
-    bar3: { type: TYPE.Boolean },
-    bar4: { type: TYPE.Complex },
-    bar5: { type: TYPE.Number },
-    bar6: { type: TYPE.Object }
-};
-
-export default class Foo extends VuexModel {
-    constructor(data) {
-        super(
-            data,
-            template,
-            customActions
-        );
-    }
-}
 ```
+
+### Usage Example
+Go check /example for a sample project.

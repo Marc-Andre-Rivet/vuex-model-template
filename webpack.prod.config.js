@@ -1,8 +1,12 @@
 let webpack = require('webpack');
 let webpackConfig = require('./webpack.base.config');
 
+let settings = JSON.stringify({
+
+});
+
 let rule = webpackConfig.module.rules[0];
-rule.loader += `!webpack-preprocessor`;
+rule.loader += `!webpack-preprocessor?${settings}`;
 
 webpackConfig.output.filename = 'vuex-model-template.js';
 

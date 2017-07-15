@@ -8,7 +8,7 @@ import generateObjectId from 'VuexModelObject/generateObjectId';
 let _store;
 let wm = new WeakMap();
 
-export class VuexModelObject extends AbstractModelObject {
+export default class VuexModelObject extends AbstractModelObject {
     constructor(
         data,
         template,

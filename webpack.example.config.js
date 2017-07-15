@@ -11,37 +11,40 @@ let babelSettings = JSON.stringify({
     cacheDirectory: true
 });
 
+let settings = JSON.stringify({
+    definitions: ['dev']
+});
+
 module.exports = {
     entry: {
-        index: ['./src/index.js']
+        index: ['./example/index.htm', './example/index.js']
     },
     output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: 'vuex-model-template.dev.js',
-        libraryTarget: 'umd'
-    },
-    externals: {
-        "es6-promise": "es6-promise",
-        "vue": "vue",
-        "vuex": "vuex"
+        path: path.resolve(__dirname, 'build/example'),
+        filename: '[name].js'
     },
     resolve: {
         modules: [
             path.resolve('.'),
+            path.resolve('./example'),
             path.resolve('./node_modules'),
             path.resolve('./src')
         ],
         alias: {
-            vue: 'vue/dist/vue.js'
+            vue: 'vue/dist/vue.js',
+            'vuex-model-template': 'src/index.js'
         },
         extensions: ['.js']
     },
     module: {
         rules: [
             {
+                test: /\/example\/index\.htm(l?)$/,
+                loader: 'file-loader?name=[name].[ext]'
+            }, {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: `babel-loader?${babelSettings}`
+                loader: `babel-loader?${babelSettings}!webpack-preprocessor?${settings}`
             }
         ]
     },
