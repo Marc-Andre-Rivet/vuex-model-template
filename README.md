@@ -41,4 +41,4 @@ VuexModel.use(store);
 ```
 
 ### Usage Example
-Go check the [Example](./tree/master/example)
+Go check the [Example](example)
