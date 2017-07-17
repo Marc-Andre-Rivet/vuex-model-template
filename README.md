@@ -123,7 +123,7 @@ foo.actions.doAction(30).then(res => {
 
 // Actions op an array
 foo.actions.aArray.clear().then(() => {
-    return foo.actions.aArray.add('new entry);
+    return foo.actions.aArray.add('new entry');
 }).then(() => {
     return foo.actions.aArray.remove('new entry');
 }).then(() => {
