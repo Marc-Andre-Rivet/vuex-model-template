@@ -18,6 +18,17 @@ export default function persist(target, template) {
             } else if (this[key]) {
                 target[key] = this[key]::persist({}, property.properties);
             }
+        } else if (property.type === TYPE.Array &&
+            (_.isFunction(property.serialize) || (property.items && _.isFunction(property.items.serialize)))) {
+            let array = this[key];
+            if (_.isFunction(property.serialize)) {
+                target[key] = property.serialize(array);
+                array = target[key];
+            }
+
+            if (_.isFunction(property.items.serialize)) {
+                target[key] = _.map(array, property.items.serialize);
+            }
         } else {
             target[key] = this[key];
         }
