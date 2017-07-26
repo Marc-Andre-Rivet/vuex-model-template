@@ -19,6 +19,9 @@ function visitActions(template) {
                 commit(actionName, [target, value]);
 
                 if (_.isFunction(template[property].corollary)) {
+                    /*#if log*/
+                    console.log('act -> corollary', actionName, target, value);
+                    /*#endif*/
                     target::template[property].corollary(value);
                 }
             };

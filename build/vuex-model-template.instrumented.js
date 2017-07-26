@@ -3906,6 +3906,7 @@ function visitActions(template) {
                 console.log('act', actionName, target, value);
                 commit(actionName, [target, value]);
                 if ((0, _isFunction3.default)(template[property].corollary)) {
+                    console.log('act -> corollary', actionName, target, value);
                     template[property].corollary.call(target, value);
                 }
             };
