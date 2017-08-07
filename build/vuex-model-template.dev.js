@@ -791,8 +791,8 @@ exports.default = function (data, template) {
     prefixes = [];
     validate.call(data, template);
     (0, _defaults3.default)(this, data);
-    var promises = apply.call(this, data, data, template);
-    if (promises && promises.length) {
+    var promises = apply.call(this, data, data, template) || [];
+    if (promises.length) {
         return _Promise.all(promises).then(function () {
             return data;
         });
@@ -3358,7 +3358,7 @@ function visit(rawData, template) {
 
 exports.default = function (data, template) {
     currentData = data;
-    var promises = visit.call(data, data, template);
+    var promises = visit.call(data, data, template) || [];
     return _Promise.all(promises).then(function () {
         return data;
     });

@@ -60,10 +60,10 @@ function visit(rawData, template, promises = []) {
 
 export default (data, template) => {
     currentData = data;
-    let promises = data::visit(data, template);
+    let promises = data::visit(data, template) || [];
 
     /*#if log*/
-    if (promises && promises.length) {
+    if (promises.length) {
         console.log('deserializing', data);
     }
     /*#endif*/

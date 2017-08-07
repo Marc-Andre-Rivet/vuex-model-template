@@ -145,15 +145,15 @@ export default function(data, template) {
     data::validate(template);
 
     _.defaults(this, data);
-    let promises = this::apply(data, data, template);
+    let promises = this::apply(data, data, template) || [];
 
     /*#if log*/
-    if (promises && promises.length) {
+    if (promises.length) {
         console.log('applying defaults', data);
     }
     /*#endif*/
 
-    if (promises && promises.length) {
+    if (promises.length) {
         return Promise.all(promises).then(() => data);
     }
 
