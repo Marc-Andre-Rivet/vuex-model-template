@@ -25,6 +25,7 @@ export default class ProxyWrapper {
                     key !== '__ob__' && // VueJS models
                     key !== '_isVue' && // VueJS models
                     key !== 'actions' && // vuex-model-template
+                    key !== 'properties' && // vuex-model-template
                     key !== 'then' && // promises & thenable objects
                     key !== 'toJSON' && // JSON.stringify
                     (key.length && key[0] !== '$') &&

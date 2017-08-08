@@ -12,14 +12,14 @@ export default class VuexModelObject extends AbstractModelObject {
     constructor(
         data,
         template,
-        customActions = {}
+        custom = {}
     ) {
         if (!_store) {
             throw new Error('Run ModelObject.use($store) before calling ctor');
         }
 
         super(data, template, target => {
-            target::generateActions(template, customActions);
+            target::generateActions(template, custom);
         });
 
         wm.set(this, {
@@ -29,7 +29,7 @@ export default class VuexModelObject extends AbstractModelObject {
         });
 
         return this::wrapInstance(target => {
-            target::generateModule(template, customActions);
+            target::generateModule(template, custom);
         });
     }
 

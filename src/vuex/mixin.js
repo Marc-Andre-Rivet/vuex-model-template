@@ -1,7 +1,7 @@
 import { mapActions, mapMutations } from 'vuex';
 
 export function mutate(name, ...args) {
-    mapMutations([name])[name].call(this, args);
+    return mapMutations([name])[name].call(this, args);
 }
 
 export function act(name, ...args) {

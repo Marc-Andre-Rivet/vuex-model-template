@@ -624,6 +624,7 @@ var ProxyWrapper = function () {
                     key !== '__ob__' && // VueJS models
                     key !== '_isVue' && // VueJS models
                     key !== 'actions' && // vuex-model-template
+                    key !== 'properties' && // vuex-model-template
                     key !== 'then' && // promises & thenable objects
                     key !== 'toJSON' && // JSON.stringify
                     key.length && key[0] !== '$' && keys.indexOf(key) === -1) {
@@ -1430,7 +1431,7 @@ function mutate(name) {
         args[_key - 1] = arguments[_key];
     }
 
-    (0, _vuex.mapMutations)([name])[name].call(this, args);
+    return (0, _vuex.mapMutations)([name])[name].call(this, args);
 }
 function act(name) {
     for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -3583,7 +3584,7 @@ var VuexModelObject = function (_AbstractModelObject) {
     function VuexModelObject(data, template) {
         var _ret;
 
-        var customActions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        var custom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
         _classCallCheck(this, VuexModelObject);
 
@@ -3592,7 +3593,7 @@ var VuexModelObject = function (_AbstractModelObject) {
         }
 
         var _this = _possibleConstructorReturn(this, (VuexModelObject.__proto__ || Object.getPrototypeOf(VuexModelObject)).call(this, data, template, function (target) {
-            _generateActions2.default.call(target, template, customActions);
+            _generateActions2.default.call(target, template, custom);
         }));
 
         wm.set(_this, {
@@ -3601,7 +3602,7 @@ var VuexModelObject = function (_AbstractModelObject) {
             $template: template
         });
         return _ret = _wrapInstance2.default.call(_this, function (target) {
-            _generateModule2.default.call(target, template, customActions);
+            _generateModule2.default.call(target, template, custom);
         }), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -3669,10 +3670,18 @@ var _each3 = _interopRequireDefault(_each2);
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports.default = function (template, customActions) {
-    var rawActions = _extends({}, visitUserActions.call(this, template), visitCustomActions.call(this, customActions));
+exports.default = function (template, custom) {
+    var _this4 = this;
+
+    var rawActions = _extends({}, visitUserActions.call(this, template), visitCustomActions.call(this, custom.actions || custom));
     this.actions = {};
     buildActions.call(this, rawActions, this.actions);
+    this.properties = {};
+    if (custom.properties) {
+        (0, _forOwn3.default)(custom.properties, function (property, key) {
+            _this4.properties[key] = property.bind(_this4);
+        });
+    }
 };
 
 var _mixin = __webpack_require__(37);
@@ -3840,7 +3849,10 @@ exports.default = function (template, module) {
         items: [this]
     };
     var mappedModule = {};
-    (0, _forOwn3.default)(module, function (value, key) {
+    (0, _forOwn3.default)(module.actions || module, function (value, key) {
+        mappedModule['[' + _this3.$moduleId + ']:' + key] = value;
+    });
+    (0, _forOwn3.default)(module.properties, function (value, key) {
         mappedModule['[' + _this3.$moduleId + ']:' + key] = value;
     });
     return this.$store.registerModule(this.$moduleId, {

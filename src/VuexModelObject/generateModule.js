@@ -125,7 +125,10 @@ export default function (template, module) {
     };
 
     let mappedModule = {};
-    _.forOwn(module, (value, key) => {
+    _.forOwn(module.actions || module, (value, key) => {
+        mappedModule[`[${this.$moduleId}]:${key}`] = value;
+    });
+    _.forOwn(module.properties, (value, key) => {
         mappedModule[`[${this.$moduleId}]:${key}`] = value;
     });
 

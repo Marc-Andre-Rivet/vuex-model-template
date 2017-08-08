@@ -54,12 +54,19 @@ function buildActions(rawActions, target) {
     });
 }
 
-export default function (template, customActions) {
+export default function (template, custom) {
     let rawActions = {
         ...this::visitUserActions(template),
-        ...this::visitCustomActions(customActions)
+        ...this::visitCustomActions(custom.actions || custom)
     };
 
     this.actions = {};
     this::buildActions(rawActions, this.actions);
+
+    this.properties = {};
+    if (custom.properties) {
+        _.forOwn(custom.properties, (property, key) => {
+            this.properties[key] = property.bind(this);
+        });
+    }
 }
