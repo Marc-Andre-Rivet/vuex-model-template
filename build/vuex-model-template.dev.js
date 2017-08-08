@@ -3351,9 +3351,12 @@ function visit(rawData, template) {
 }
 
 exports.default = function (data, template) {
-    var promises = visit.call(data, data, template) || [];
-    return _Promise.all(promises).then(function () {
-        return data;
+    var dataPromise = template.deserialize ? _Promise.resolve(template.deserialize(data)) : _Promise.resolve(data);
+    return dataPromise.then(function (resolvedData) {
+        var promises = visit.call(resolvedData, resolvedData, template) || [];
+        return _Promise.all(promises).then(function () {
+            return resolvedData;
+        });
     });
 };
 

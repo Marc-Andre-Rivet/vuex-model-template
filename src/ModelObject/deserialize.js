@@ -57,12 +57,19 @@ function visit(rawData, template, promises = []) {
 }
 
 export default (data, template) => {
-    let promises = data::visit(data, template) || [];
+    let dataPromise = template.deserialize ?
+        Promise.resolve(template.deserialize(data)) :
+        Promise.resolve(data);
 
-    /*#if log*/
-    if (promises.length) {
-        console.log('deserializing', data);
-    }
-    /*#endif*/
-    return Promise.all(promises).then(() => data);
+    return dataPromise.then(resolvedData => {
+        let promises = resolvedData::visit(resolvedData, template) || [];
+
+        /*#if log*/
+        if (promises.length) {
+            console.log('deserializing', resolvedData);
+        }
+        /*#endif*/
+        return Promise.all(promises).then(() => resolvedData);
+    });
+
 };
