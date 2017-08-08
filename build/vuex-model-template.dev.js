@@ -3310,7 +3310,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
 
-var currentData = void 0;
 function visit(rawData, template) {
     var _this = this;
 
@@ -3323,9 +3322,7 @@ function visit(rawData, template) {
         if (property.type === _type2.default.Array && property.items && property.items.deserialize) {
             var promise = void 0;
             if (property.deserialize) {
-                var _context;
-
-                promise = _Promise.resolve((_context = currentData, property.deserialize).call(_context, _this[key], rawData)).then(function (result) {
+                promise = _Promise.resolve(property.deserialize.call(rawData, _this[key], rawData)).then(function (result) {
                     _this[key] = result;
                     return result;
                 });
@@ -3334,31 +3331,26 @@ function visit(rawData, template) {
             }
             promises.push(promise.then(function (items) {
                 var itemPromises = (0, _map3.default)(items, function (item) {
-                    var _context2;
-
-                    return _Promise.resolve((_context2 = currentData, property.items.deserialize).call(_context2, item, rawData));
+                    return _Promise.resolve(property.items.deserialize.call(rawData, item, rawData));
                 });
                 return _Promise.all(itemPromises).then(function (results) {
                     _this[key] = results;
                 });
             }));
         } else if (property.deserialize) {
-            var _context3;
-
-            promises.push(_Promise.resolve((_context3 = currentData, property.deserialize).call(_context3, _this[key], rawData)).then(function (result) {
+            promises.push(_Promise.resolve(property.deserialize.call(rawData, _this[key], rawData)).then(function (result) {
                 _this[key] = result;
             }));
         } else if (property.type === _type2.default.Complex) {
-            var _context4;
+            var _context;
 
-            (_context4 = _this[key], visit).call(_context4, rawData, property.properties, promises);
+            (_context = _this[key], visit).call(_context, rawData, property.properties, promises);
         }
     });
     return promises;
 }
 
 exports.default = function (data, template) {
-    currentData = data;
     var promises = visit.call(data, data, template) || [];
     return _Promise.all(promises).then(function () {
         return data;

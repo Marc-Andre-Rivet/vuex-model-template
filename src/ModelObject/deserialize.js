@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import TYPE from 'enumerations/type';
 
-let currentData;
-
 function visit(rawData, template, promises = []) {
     if (!this) {
         return;
@@ -16,7 +14,7 @@ function visit(rawData, template, promises = []) {
 
             let promise;
             if (property.deserialize) {
-                promise = Promise.resolve(currentData::property.deserialize(this[key], rawData)).then(result => {
+                promise = Promise.resolve(rawData::property.deserialize(this[key], rawData)).then(result => {
                     /*#if log*/
                     console.log('deserialized property', key, result);
                     /*#endif*/
@@ -30,7 +28,7 @@ function visit(rawData, template, promises = []) {
 
             promises.push(promise.then(items => {
                 let itemPromises = _.map(items, item => {
-                    return Promise.resolve(currentData::property.items.deserialize(item, rawData));
+                    return Promise.resolve(rawData::property.items.deserialize(item, rawData));
                 });
 
                 return Promise.all(itemPromises).then(results => {
@@ -44,7 +42,7 @@ function visit(rawData, template, promises = []) {
             /*#if log*/
             console.log('deserialize property', key);
             /*#endif*/
-            promises.push(Promise.resolve(currentData::property.deserialize(this[key], rawData)).then(result => {
+            promises.push(Promise.resolve(rawData::property.deserialize(this[key], rawData)).then(result => {
                 /*#if log*/
                 console.log('deserialized property', key, result);
                 /*#endif*/
@@ -59,7 +57,6 @@ function visit(rawData, template, promises = []) {
 }
 
 export default (data, template) => {
-    currentData = data;
     let promises = data::visit(data, template) || [];
 
     /*#if log*/
