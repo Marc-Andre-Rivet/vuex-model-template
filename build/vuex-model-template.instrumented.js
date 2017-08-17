@@ -173,6 +173,7 @@ exports.default = _ProxyWrapper2.default.getProxy({
     Array: Symbol('Array'),
     Boolean: Symbol('Boolean'),
     Complex: Symbol('Complex'),
+    Function: Symbol('Function'),
     Number: Symbol('Number'),
     Object: Symbol('Object'),
     String: Symbol('String'),
@@ -628,7 +629,7 @@ var ProxyWrapper = function () {
                     key !== 'then' && // promises & thenable objects
                     key !== 'toJSON' && // JSON.stringify
                     key.length && key[0] !== '$' && keys.indexOf(key) === -1) {
-                        throw new Error('unknown property \'' + key + '\'');
+                        throw new Error('unknown property \'' + key + '\' in target=', t);
                     }
                     return t[key];
                 }
@@ -738,10 +739,6 @@ var _cloneDeep2 = __webpack_require__(24);
 
 var _cloneDeep3 = _interopRequireDefault(_cloneDeep2);
 
-var _isFunction2 = __webpack_require__(7);
-
-var _isFunction3 = _interopRequireDefault(_isFunction2);
-
 var _intersection2 = __webpack_require__(80);
 
 var _intersection3 = _interopRequireDefault(_intersection2);
@@ -761,6 +758,10 @@ var _isString3 = _interopRequireDefault(_isString2);
 var _isNumber2 = __webpack_require__(92);
 
 var _isNumber3 = _interopRequireDefault(_isNumber2);
+
+var _isFunction2 = __webpack_require__(7);
+
+var _isFunction3 = _interopRequireDefault(_isFunction2);
 
 var _isObject2 = __webpack_require__(4);
 
@@ -813,8 +814,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
 
 var prefixes = [];
-function throwError(type, data) {
+function throwTypeError(type, data) {
     throw new Error('expected \'' + type.toString() + '\' but got \'' + (typeof data === 'undefined' ? 'undefined' : _typeof(data)) + '\' in \'' + prefixes.join('.') + '\'');
+}
+function throwPersistenceError(type) {
+    throw new Error('expected \'' + prefixes.join('.') + '\' of type \'' + type.toString() + '\' to be transient');
+}
+function throwReadonlyError(type) {
+    throw new Error('expected \'' + prefixes.join('.') + '\' of type \'' + type.toString() + '\' to be readonly');
 }
 function validateProperty(template) {
     if ((0, _isUndefined3.default)(this)) {
@@ -828,7 +835,7 @@ function validateProperty(template) {
             break;
         case _type2.default.Array:
             if (!(0, _isArray3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             } else if (!template.items) {
                 break;
             } else {
@@ -839,28 +846,39 @@ function validateProperty(template) {
             break;
         case _type2.default.Boolean:
             if (!(0, _isBoolean3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case _type2.default.Complex:
             if (!(0, _isObject3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             validate.call(this, template.properties);
             break;
+        case _type2.default.Function:
+            if (!(0, _isFunction3.default)(this)) {
+                throwTypeError(template.type, this);
+            }
+            if (!template.transient) {
+                throwPersistenceError(template.type);
+            }
+            if (!template.readonly) {
+                throwReadonlyError(template.type);
+            }
+            break;
         case _type2.default.Number:
             if (!(0, _isNumber3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case _type2.default.Object:
             if (!(0, _isObject3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case _type2.default.String:
             if (!(0, _isString3.default)(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         default:
@@ -892,7 +910,9 @@ function apply(rawData, data, template) {
     var defaultProperties = (0, _difference3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
     (0, _each3.default)(defaultProperties, function (property) {
         if (template[property].type !== _type2.default.Complex) {
-            if ((0, _isFunction3.default)(template[property].defaultValue)) {
+            if (template[property].type === _type2.default.Function && (0, _isFunction3.default)(template[property].defaultValue)) {
+                _this2[property] = template[property].defaultValue.bind(_this2);
+            } else if ((0, _isFunction3.default)(template[property].defaultValue)) {
                 var value = template[property].defaultValue(rawData);
                 if (value.then) {
                     promises.push(_Promise.resolve(value).then(function (result) {
@@ -1468,8 +1488,10 @@ var _type2 = _interopRequireDefault(_type);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = function (type) {
-    if (type === _type2.default.Array) {
+exports.default = function (template) {
+    if (template.readonly) {
+        return [];
+    } else if (template.type === _type2.default.Array) {
         return ['set', 'add', 'remove', 'clear'];
     } else {
         return ['set'];
@@ -3540,6 +3562,9 @@ function persist(target, template) {
             target[key] = _this[key];
         }
     });
+    if (template.serialize) {
+        target = template.serialize(target);
+    }
     return target;
 }
 
@@ -3711,7 +3736,7 @@ function visitUserActions(template) {
     var properties = Object.getOwnPropertyNames(template);
     (0, _each3.default)(properties, function (property) {
         actions[property] = {};
-        (0, _forOwn3.default)((0, _getActions2.default)(template[property].type), function (key) {
+        (0, _forOwn3.default)((0, _getActions2.default)(template[property]), function (key) {
             var actionName = '[' + _this.$moduleId + ']/' + prefixes.join('/') + (prefixes.length ? '/' : '') + property + ':' + key;
             actions[property][key] = actionName;
         });
@@ -3901,7 +3926,7 @@ function visitActions(template) {
     var actions = {};
     var properties = Object.getOwnPropertyNames(template);
     (0, _each3.default)(properties, function (property) {
-        (0, _forOwn3.default)((0, _getActions2.default)(template[property].type), function (key) {
+        (0, _forOwn3.default)((0, _getActions2.default)(template[property]), function (key) {
             var actionName = '[' + _this.$moduleId + ']/' + prefixes.join('/') + (prefixes.length ? '/' : '') + property + ':' + key;
             actions[actionName] = function (_ref, _ref2) {
                 var commit = _ref.commit;
@@ -3932,7 +3957,7 @@ function visitMutations(template) {
     var mutations = {};
     var properties = Object.getOwnPropertyNames(template);
     (0, _each3.default)(properties, function (property) {
-        (0, _forOwn3.default)((0, _getActions2.default)(template[property].type), function (key) {
+        (0, _forOwn3.default)((0, _getActions2.default)(template[property]), function (key) {
             var actionName = '[' + _this2.$moduleId + ']/' + prefixes.join('/') + (prefixes.length ? '/' : '') + property + ':' + key;
             var chain = (0, _cloneDeep3.default)(prefixes);
             if (key === 'set') {

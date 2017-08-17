@@ -31,7 +31,7 @@ export default class ProxyWrapper {
                     (key.length && key[0] !== '$') &&
                     keys.indexOf(key) === -1
                 ) {
-                    throw new Error(`unknown property '${key}'`);
+                    throw new Error(`unknown property '${key}' in target=`, t);
                 }
 
                 return t[key];

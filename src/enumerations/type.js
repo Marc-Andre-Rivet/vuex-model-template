@@ -5,6 +5,7 @@ export default Wrapper.getProxy({
     Array: Symbol('Array'),
     Boolean: Symbol('Boolean'),
     Complex: Symbol('Complex'),
+    Function: Symbol('Function'),
     Number: Symbol('Number'),
     Object: Symbol('Object'),
     String: Symbol('String'),

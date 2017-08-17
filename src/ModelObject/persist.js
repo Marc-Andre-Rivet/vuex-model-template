@@ -34,5 +34,9 @@ export default function persist(target, template) {
         }
     });
 
+    if (template.serialize) {
+        target = template.serialize(target);
+    }
+
     return target;
 }

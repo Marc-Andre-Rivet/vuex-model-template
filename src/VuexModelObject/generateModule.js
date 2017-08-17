@@ -9,7 +9,7 @@ function visitActions(template) {
 
     let properties = Object.getOwnPropertyNames(template);
     _.each(properties, property => {
-        _.forOwn(getActions(template[property].type), key => {
+        _.forOwn(getActions(template[property]), key => {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
             actions[actionName] = ({ commit }, [target, value]) => {
@@ -42,7 +42,7 @@ function visitMutations(template) {
 
     let properties = Object.getOwnPropertyNames(template);
     _.each(properties, property => {
-        _.forOwn(getActions(template[property].type), key => {
+        _.forOwn(getActions(template[property]), key => {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
             let chain = _.cloneDeep(prefixes);

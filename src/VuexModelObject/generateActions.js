@@ -10,7 +10,7 @@ function visitUserActions(template) {
     _.each(properties, property => {
         actions[property] = {};
 
-        _.forOwn(getActions(template[property].type), key => {
+        _.forOwn(getActions(template[property]), key => {
             let actionName = `[${this.$moduleId}]/${prefixes.join('/')}${prefixes.length ? '/' : ''}${property}:${key}`;
 
             actions[property][key] = actionName;

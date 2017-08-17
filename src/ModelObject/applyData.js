@@ -3,8 +3,16 @@ import TYPE from 'enumerations/type';
 
 let prefixes = [];
 
-function throwError(type, data) {
+function throwTypeError(type, data) {
     throw new Error(`expected '${type.toString()}' but got '${typeof data}' in '${prefixes.join('.')}'`);
+}
+
+function throwPersistenceError(type) {
+    throw new Error(`expected '${prefixes.join('.')}' of type '${type.toString()}' to be transient`);
+}
+
+function throwReadonlyError(type) {
+    throw new Error(`expected '${prefixes.join('.')}' of type '${type.toString()}' to be readonly`);
 }
 
 export function validateProperty(template) {
@@ -21,7 +29,7 @@ export function validateProperty(template) {
             break;
         case TYPE.Array:
             if (!_.isArray(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             } else if (!template.items) {
                 break;
             } else {
@@ -32,29 +40,42 @@ export function validateProperty(template) {
             break;
         case TYPE.Boolean:
             if (!_.isBoolean(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case TYPE.Complex:
             if (!_.isObject(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
 
             this::validate(template.properties);
             break;
+        case TYPE.Function:
+            if (!_.isFunction(this)) {
+                throwTypeError(template.type, this);
+            }
+
+            if (!template.transient) {
+                throwPersistenceError(template.type);
+            }
+
+            if (!template.readonly) {
+                throwReadonlyError(template.type);
+            }
+            break;
         case TYPE.Number:
             if (!_.isNumber(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case TYPE.Object:
             if (!_.isObject(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         case TYPE.String:
             if (!_.isString(this)) {
-                throwError(template.type, this);
+                throwTypeError(template.type, this);
             }
             break;
         default:
@@ -95,7 +116,11 @@ function apply(rawData, data, template, promises = []) {
 
     _.each(defaultProperties, property => {
         if (template[property].type !== TYPE.Complex) {
-            if (_.isFunction(template[property].defaultValue)) {
+            if (template[property].type === TYPE.Function &&
+                _.isFunction(template[property].defaultValue)
+            ) {
+                this[property] = template[property].defaultValue.bind(this);
+            } else if (_.isFunction(template[property].defaultValue)) {
                 let value = template[property].defaultValue(rawData);
 
                 if (value.then) {
