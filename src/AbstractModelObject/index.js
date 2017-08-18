@@ -19,7 +19,7 @@ export default class AbstractModelObject {
         return this::persist({}, this.$template);
     }
 
-    static hydrate(raw, template) {
+    static hydrate(raw, template, Ctor) {
         /*#if log*/
         console.log('hydrate > raw', raw, template);
         /*#endif*/
@@ -40,6 +40,12 @@ export default class AbstractModelObject {
             return hydrated;
         });
         /*#endif*/
+
+        if (Ctor) {
+            hydratePromise = hydratePromise.then(hydrated => {
+                return new Ctor(hydrated);
+            });
+        }
 
         return hydratePromise;
     }

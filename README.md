@@ -98,9 +98,7 @@ class FooClass extends VuexModelObject {
     }
 
     static hydrate(rawData) {
-        return VuexModelObject.hydrate(rawData, template).then(data => {
-            return FooClass(data);
-        });
+        return VuexModelObject.hydrate(rawData, template, FooClass);
     }
 }
 

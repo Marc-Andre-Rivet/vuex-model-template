@@ -92,8 +92,6 @@ export default class Article extends VuexModelObject {
     }
 
     static hydrate(rawData) {
-        return VuexModelObject.hydrate(rawData, ARTICLE_TEMPLATE).then(data => {
-            return new Article(data);
-        });
+        return VuexModelObject.hydrate(rawData, ARTICLE_TEMPLATE, Article);
     }
 }

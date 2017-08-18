@@ -15,7 +15,7 @@ export default class VuexModelObject extends AbstractModelObject {
         custom = {}
     ) {
         if (!_store) {
-            throw new Error('Run ModelObject.use($store) before calling ctor');
+            throw new Error('Run VuexModelObject.use($store) before calling ctor');
         }
 
         super(data, template, target => {

@@ -693,13 +693,18 @@ var AbstractModelObject = function () {
         }
     }], [{
         key: 'hydrate',
-        value: function hydrate(raw, template) {
+        value: function hydrate(raw, template, Ctor) {
             var hydratePromise = (0, _deserialize2.default)(raw, template).then(function (deserialized) {
                 var dest = {};
                 return _Promise.resolve(_applyData2.default.call(dest, deserialized, template)).then(function () {
                     return dest;
                 });
             });
+            if (Ctor) {
+                hydratePromise = hydratePromise.then(function (hydrated) {
+                    return new Ctor(hydrated);
+                });
+            }
             return hydratePromise;
         }
     }]);
@@ -3599,7 +3604,7 @@ var VuexModelObject = function (_AbstractModelObject) {
         _classCallCheck(this, VuexModelObject);
 
         if (!_store) {
-            throw new Error('Run ModelObject.use($store) before calling ctor');
+            throw new Error('Run VuexModelObject.use($store) before calling ctor');
         }
 
         var _this = _possibleConstructorReturn(this, (VuexModelObject.__proto__ || Object.getPrototypeOf(VuexModelObject)).call(this, data, template, function (target) {
