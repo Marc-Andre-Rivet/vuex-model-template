@@ -87,9 +87,8 @@ const template = {
 };
 
 const module = {
-    // target (this) is always the first parameter, additional params come after
-    doAction({ state }, [target, aNumber]) {
-        return target.actions.aNumber.set(aNumber);
+    doAction(aNumber) {
+        return this.actions.aNumber.set(aNumber);
     }
 };
 

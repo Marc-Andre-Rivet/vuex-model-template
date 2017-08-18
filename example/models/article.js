@@ -79,9 +79,9 @@ const ARTICLE_TEMPLATE = {
 };
 
 const ARTICLE_MODULE = {
-    // save({ }, [target]) {
-    //     return ArticleService.save(target).then(result => {
-    //         return target.actions.dirty.set(false).then(() => result);
+    // save() {
+    //     return ArticleService.save(this).then(result => {
+    //         return this.actions.dirty.set(false).then(() => result);
     //     });
     // }
 };
