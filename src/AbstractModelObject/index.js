@@ -9,7 +9,7 @@ export default class AbstractModelObject {
         strategy = () => { }
     ) {
         if (this::applyData(data, template)) {
-            throw new Error('applyData needed to resolve default values asynchronously. Use \'fromRaw\' before using the consrtructor');
+            throw new Error('default values need to be resolved asynchronously. Use \'hydrate\' before using the consrtructor');
         }
 
         strategy(this);
@@ -19,23 +19,28 @@ export default class AbstractModelObject {
         return this::persist({}, this.$template);
     }
 
-    static fromJSON(data, template) {
-        console.warn(`'fromJSON' deprecated, use 'hydrate' instead`);
-        return AbstractModelObject.hydrate(data, template);
-    }
-
-    static hydrate(data, template) {
+    static hydrate(raw, template) {
         /*#if log*/
-        console.log('hydrate', data, template);
+        console.log('hydrate > raw', raw, template);
         /*#endif*/
 
-        return deserialize(data, template);
-    }
+        let hydratePromise = deserialize(raw, template).then(deserialized => {
+            /*#if log*/
+            console.log('hydrate > deserialized', deserialized, template);
+            /*#endif*/
 
-    static fromRaw(data, template) {
-        return AbstractModelObject.hydrate(data, template).then(raw => {
             let dest = {};
-            return Promise.resolve(dest::applyData(raw, template)).then(() => dest);
+            return Promise.resolve(dest::applyData(deserialized, template)).then(() => dest);
         });
+
+        /*#if log*/
+        hydratePromise = hydratePromise.then(hydrated => {
+            console.log('hydrate > hydrated', hydrated, template);
+
+            return hydrated;
+        });
+        /*#endif*/
+
+        return hydratePromise;
     }
 }

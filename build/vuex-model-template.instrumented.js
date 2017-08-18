@@ -681,7 +681,7 @@ var AbstractModelObject = function () {
         _classCallCheck(this, AbstractModelObject);
 
         if (_applyData2.default.call(this, data, template)) {
-            throw new Error('applyData needed to resolve default values asynchronously. Use \'fromRaw\' before using the consrtructor');
+            throw new Error('default values need to be resolved asynchronously. Use \'hydrate\' before using the consrtructor');
         }
         strategy(this);
     }
@@ -692,26 +692,21 @@ var AbstractModelObject = function () {
             return _persist2.default.call(this, {}, this.$template);
         }
     }], [{
-        key: 'fromJSON',
-        value: function fromJSON(data, template) {
-            console.warn('\'fromJSON\' deprecated, use \'hydrate\' instead');
-            return AbstractModelObject.hydrate(data, template);
-        }
-    }, {
         key: 'hydrate',
-        value: function hydrate(data, template) {
-            console.log('hydrate', data, template);
-            return (0, _deserialize2.default)(data, template);
-        }
-    }, {
-        key: 'fromRaw',
-        value: function fromRaw(data, template) {
-            return AbstractModelObject.hydrate(data, template).then(function (raw) {
+        value: function hydrate(raw, template) {
+            console.log('hydrate > raw', raw, template);
+            var hydratePromise = (0, _deserialize2.default)(raw, template).then(function (deserialized) {
+                console.log('hydrate > deserialized', deserialized, template);
                 var dest = {};
-                return _Promise.resolve(_applyData2.default.call(dest, raw, template)).then(function () {
+                return _Promise.resolve(_applyData2.default.call(dest, deserialized, template)).then(function () {
                     return dest;
                 });
             });
+            hydratePromise = hydratePromise.then(function (hydrated) {
+                console.log('hydrate > hydrated', hydrated, template);
+                return hydrated;
+            });
+            return hydratePromise;
         }
     }]);
 
