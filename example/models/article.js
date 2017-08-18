@@ -56,7 +56,7 @@ const ARTICLE_TEMPLATE = {
                     deserialize(id) {
                         if (this.resolveReferences) {
                             return ArticleService.get(id).then(rawData => {
-                                return new Article.hydrate(rawData);
+                                return new Article(rawData).$waitReady;
                             });
                         } else {
                             return { id: id };
@@ -89,9 +89,5 @@ const ARTICLE_MODULE = {
 export default class Article extends VuexModelObject {
     constructor(data) {
         super(data, ARTICLE_TEMPLATE, ARTICLE_MODULE);
-    }
-
-    static hydrate(rawData) {
-        return VuexModelObject.hydrate(rawData, ARTICLE_TEMPLATE, Article);
     }
 }

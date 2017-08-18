@@ -97,34 +97,37 @@ class FooClass extends VuexModelObject {
         super(data, template, module);
     }
 
-    static hydrate(rawData) {
-        return VuexModelObject.hydrate(rawData, template, FooClass);
+    $initialize() {
+        // $initialize will be executed before $waitReady returns the instance
+        return this.actions.doAction(3);
     }
 }
 
 let foo = new FooClass();
-console.log(foo.aNumber); // 10
-console.log(foo.aString); // 'defined'
-console.log(foo.invalidProp); // throws exception if dev || instrumented builds (wrapped in proxy)
+foo.$waitReady.then(() => {
+    console.log(foo.aNumber); // 10
+    console.log(foo.aString); // 'defined'
+    console.log(foo.invalidProp); // throws exception if dev || instrumented builds (wrapped in proxy)
 
-// Modify values through wrapped Vuex actions
-foo.actions.aNumber.set(20).then(res => {
-    console.log(foo.aNumber); // 20
-});
-console.log(foo.aNumber); // 10
+    // Modify values through wrapped Vuex actions
+    foo.actions.aNumber.set(20).then(res => {
+        console.log(foo.aNumber); // 20
+    });
+    console.log(foo.aNumber); // 10
 
-// Call custom actions
-foo.actions.doAction(30).then(res => {
-    console.log(foo.aNumber); // 30
-});
+    // Call custom actions
+    foo.actions.doAction(30).then(res => {
+        console.log(foo.aNumber); // 30
+    });
 
-// Actions op an array
-foo.actions.aArray.clear().then(() => {
-    return foo.actions.aArray.add('new entry');
-}).then(() => {
-    return foo.actions.aArray.remove('new entry');
-}).then(() => {
-    return foo.actions.aArray.set(['123', '234', '345']);
+    // Actions op an array
+    foo.actions.aArray.clear().then(() => {
+        return foo.actions.aArray.add('new entry');
+    }).then(() => {
+        return foo.actions.aArray.remove('new entry');
+    }).then(() => {
+        return foo.actions.aArray.set(['123', '234', '345']);
+    });
 });
 
 // Custom serialization and deserialization of properties

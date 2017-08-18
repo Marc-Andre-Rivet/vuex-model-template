@@ -2,51 +2,84 @@ import applyData from 'ModelObject/applyData';
 import deserialize from 'ModelObject/deserialize';
 import persist from 'ModelObject/persist';
 
+let wm = new WeakMap();
+
 export default class AbstractModelObject {
-    constructor(
-        data,
-        template,
-        strategy = () => { }
-    ) {
-        if (this::applyData(data, template)) {
-            throw new Error('default values need to be resolved asynchronously. Use \'hydrate\' before using the consrtructor');
+    constructor(raw, options) {
+        if (!options || !options.template) {
+            throw new Error('options.template needs to be defined');
         }
 
-        strategy(this);
+        let template = options.template;
+
+        /*#if log*/
+        console.log('ctor > deserialize raw data', this, raw);
+        /*#endif*/
+
+        let waitReady = deserialize(raw, template).then(deserialized => {
+            /*#if log*/
+            console.log('ctor > deserialize raw data (completed)', deserialized, this);
+            console.log('ctor > apply data to instance', this);
+            /*#endif*/
+
+            let applyPromises = this::applyData(deserialized, template);
+
+            /*#if log*/
+            if (applyPromises) {
+                console.log(`ctor > apply data to instance (in progress, waiting for ${applyPromises.length} asynchronous calls)`, this);
+            }
+            /*#endif*/
+
+            return Promise.resolve(applyPromises);
+        }).then(() => {
+            /*#if log*/
+            console.log('ctor > apply data to instance (completed)', this);
+            console.log('ctor > apply $onCreate', this);
+            /*#endif*/
+
+            return this.$onCreate();
+        });
+
+        /*#if log*/
+        waitReady = waitReady.then(() => {
+            console.log('ctor > apply strategy (completed)', this);
+            console.log('ctor > instance ready', this);
+
+            wm.get(this).$isReady = true;
+
+            return this;
+        });
+        /*#endif*/
+
+
+        wm.set(this, {
+            isReady: false,
+            options: options,
+            waitReady: waitReady
+        });
+    }
+
+    $onCreate() {
+        /*#if log*/
+        console.log('AbstractModelObject.$onCreate', this);
+        /*#endif*/
+
+        return Promise.resolve();
     }
 
     toJSON() {
         return this::persist({}, this.$template);
     }
 
-    static hydrate(raw, template, Ctor) {
-        /*#if log*/
-        console.log('hydrate > raw', raw, template);
-        /*#endif*/
+    get $isReady() {
+        return wm.get(this).isReady;
+    }
 
-        let hydratePromise = deserialize(raw, template).then(deserialized => {
-            /*#if log*/
-            console.log('hydrate > deserialized', deserialized, template);
-            /*#endif*/
+    get $options() {
+        return wm.get(this).options;
+    }
 
-            let dest = {};
-            return Promise.resolve(dest::applyData(deserialized, template)).then(() => dest);
-        });
-
-        /*#if log*/
-        hydratePromise = hydratePromise.then(hydrated => {
-            console.log('hydrate > hydrated', hydrated, template);
-
-            return hydrated;
-        });
-        /*#endif*/
-
-        if (Ctor) {
-            hydratePromise = hydratePromise.then(hydrated => {
-                return new Ctor(hydrated);
-            });
-        }
-
-        return hydratePromise;
+    get $waitReady() {
+        return wm.get(this).waitReady;
     }
 }

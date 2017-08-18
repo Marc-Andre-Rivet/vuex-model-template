@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("es6-promise"), require("vuex")) : factory(root["es6-promise"], root["vuex"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_104__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_104__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -231,6 +231,12 @@ module.exports = isObject;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var identity = __webpack_require__(45),
@@ -253,7 +259,7 @@ module.exports = baseRest;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var eq = __webpack_require__(13);
@@ -280,10 +286,10 @@ module.exports = assocIndexOf;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(8),
+var baseGetTag = __webpack_require__(9),
     isObject = __webpack_require__(4);
 
 /** `Object#toString` result references. */
@@ -323,7 +329,7 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -351,7 +357,7 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 /**
@@ -384,12 +390,6 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
 /***/ }),
 /* 11 */
@@ -672,46 +672,72 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(5).Promise : Promise;
+
+var wm = new WeakMap();
 
 var AbstractModelObject = function () {
-    function AbstractModelObject(data, template) {
-        var strategy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+    function AbstractModelObject(raw, options) {
+        var _this = this;
 
         _classCallCheck(this, AbstractModelObject);
 
-        if (_applyData2.default.call(this, data, template)) {
-            throw new Error('default values need to be resolved asynchronously. Use \'hydrate\' before using the consrtructor');
+        if (!options || !options.template) {
+            throw new Error('options.template needs to be defined');
         }
-        strategy(this);
+        var template = options.template;
+        console.log('ctor > deserialize raw data', this, raw);
+        var waitReady = (0, _deserialize2.default)(raw, template).then(function (deserialized) {
+            console.log('ctor > deserialize raw data (completed)', deserialized, _this);
+            console.log('ctor > apply data to instance', _this);
+            var applyPromises = _applyData2.default.call(_this, deserialized, template);
+            if (applyPromises) {
+                console.log('ctor > apply data to instance (in progress, waiting for ' + applyPromises.length + ' asynchronous calls)', _this);
+            }
+            return _Promise.resolve(applyPromises);
+        }).then(function () {
+            console.log('ctor > apply data to instance (completed)', _this);
+            console.log('ctor > apply $onCreate', _this);
+            return _this.$onCreate();
+        });
+        waitReady = waitReady.then(function () {
+            console.log('ctor > apply strategy (completed)', _this);
+            console.log('ctor > instance ready', _this);
+            wm.get(_this).$isReady = true;
+            return _this;
+        });
+        wm.set(this, {
+            isReady: false,
+            options: options,
+            waitReady: waitReady
+        });
     }
 
     _createClass(AbstractModelObject, [{
+        key: '$onCreate',
+        value: function $onCreate() {
+            console.log('AbstractModelObject.$onCreate', this);
+            return _Promise.resolve();
+        }
+    }, {
         key: 'toJSON',
         value: function toJSON() {
             return _persist2.default.call(this, {}, this.$template);
         }
-    }], [{
-        key: 'hydrate',
-        value: function hydrate(raw, template, Ctor) {
-            console.log('hydrate > raw', raw, template);
-            var hydratePromise = (0, _deserialize2.default)(raw, template).then(function (deserialized) {
-                console.log('hydrate > deserialized', deserialized, template);
-                var dest = {};
-                return _Promise.resolve(_applyData2.default.call(dest, deserialized, template)).then(function () {
-                    return dest;
-                });
-            });
-            hydratePromise = hydratePromise.then(function (hydrated) {
-                console.log('hydrate > hydrated', hydrated, template);
-                return hydrated;
-            });
-            if (Ctor) {
-                hydratePromise = hydratePromise.then(function (hydrated) {
-                    return new Ctor(hydrated);
-                });
-            }
-            return hydratePromise;
+    }, {
+        key: '$isReady',
+        get: function get() {
+            return wm.get(this).isReady;
+        }
+    }, {
+        key: '$options',
+        get: function get() {
+            return wm.get(this).options;
+        }
+    }, {
+        key: '$waitReady',
+        get: function get() {
+            return wm.get(this).waitReady;
         }
     }]);
 
@@ -759,7 +785,7 @@ var _isNumber2 = __webpack_require__(92);
 
 var _isNumber3 = _interopRequireDefault(_isNumber2);
 
-var _isFunction2 = __webpack_require__(7);
+var _isFunction2 = __webpack_require__(8);
 
 var _isFunction3 = _interopRequireDefault(_isFunction2);
 
@@ -811,7 +837,7 @@ var _type2 = _interopRequireDefault(_type);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(5).Promise : Promise;
 
 var prefixes = [];
 function throwTypeError(type, data) {
@@ -1041,7 +1067,7 @@ module.exports = baseAssignValue;
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseRest = __webpack_require__(5),
+var baseRest = __webpack_require__(6),
     isIterateeCall = __webpack_require__(48);
 
 /**
@@ -1308,7 +1334,7 @@ module.exports = arrayIncludes;
 /***/ (function(module, exports, __webpack_require__) {
 
 var isArrayLike = __webpack_require__(82),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /**
  * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -1550,7 +1576,7 @@ exports.default = ModelObject;
 
 var apply = __webpack_require__(20),
     assignInWith = __webpack_require__(42),
-    baseRest = __webpack_require__(5),
+    baseRest = __webpack_require__(6),
     customDefaultsAssignIn = __webpack_require__(49);
 
 /**
@@ -2037,7 +2063,7 @@ module.exports = listCacheClear;
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assocIndexOf = __webpack_require__(6);
+var assocIndexOf = __webpack_require__(7);
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype;
@@ -2078,7 +2104,7 @@ module.exports = listCacheDelete;
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assocIndexOf = __webpack_require__(6);
+var assocIndexOf = __webpack_require__(7);
 
 /**
  * Gets the list cache value for `key`.
@@ -2103,7 +2129,7 @@ module.exports = listCacheGet;
 /* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assocIndexOf = __webpack_require__(6);
+var assocIndexOf = __webpack_require__(7);
 
 /**
  * Checks if a list cache value for `key` exists.
@@ -2125,7 +2151,7 @@ module.exports = listCacheHas;
 /* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assocIndexOf = __webpack_require__(6);
+var assocIndexOf = __webpack_require__(7);
 
 /**
  * Sets the list cache `key` to `value`.
@@ -2714,7 +2740,7 @@ module.exports = stubFalse;
 
 var arrayMap = __webpack_require__(15),
     baseIntersection = __webpack_require__(80),
-    baseRest = __webpack_require__(5),
+    baseRest = __webpack_require__(6),
     castArrayLikeObject = __webpack_require__(81);
 
 /**
@@ -2848,7 +2874,7 @@ module.exports = castArrayLikeObject;
 /* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(7),
+var isFunction = __webpack_require__(8),
     isLength = __webpack_require__(83);
 
 /**
@@ -2930,7 +2956,7 @@ module.exports = isLength;
 
 var baseDifference = __webpack_require__(85),
     baseFlatten = __webpack_require__(86),
-    baseRest = __webpack_require__(5),
+    baseRest = __webpack_require__(6),
     isArrayLikeObject = __webpack_require__(32);
 
 /**
@@ -3172,9 +3198,9 @@ module.exports = stubFalse;
 /* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(8),
+var baseGetTag = __webpack_require__(9),
     isArray = __webpack_require__(1),
-    isObjectLike = __webpack_require__(9);
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var stringTag = '[object String]';
@@ -3208,8 +3234,8 @@ module.exports = isString;
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(8),
-    isObjectLike = __webpack_require__(9);
+var baseGetTag = __webpack_require__(9),
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var numberTag = '[object Number]';
@@ -3252,8 +3278,8 @@ module.exports = isNumber;
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(8),
-    isObjectLike = __webpack_require__(9);
+var baseGetTag = __webpack_require__(9),
+    isObjectLike = __webpack_require__(10);
 
 /** `Object#toString` result references. */
 var boolTag = '[object Boolean]';
@@ -3336,7 +3362,7 @@ var _type2 = _interopRequireDefault(_type);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(5).Promise : Promise;
 
 function visit(rawData, template) {
     var _this = this;
@@ -3390,9 +3416,11 @@ exports.default = function (data, template) {
         if (promises.length) {
             console.log('deserializing', resolvedData);
         }
-        return _Promise.all(promises).then(function () {
-            return resolvedData;
-        });
+        if (promises.length) {
+            return _Promise.all(promises).then(function () {
+                return resolvedData;
+            });
+        }
     });
 };
 
@@ -3513,7 +3541,7 @@ var _map2 = __webpack_require__(33);
 
 var _map3 = _interopRequireDefault(_map2);
 
-var _isFunction2 = __webpack_require__(7);
+var _isFunction2 = __webpack_require__(8);
 
 var _isFunction3 = _interopRequireDefault(_isFunction2);
 
@@ -3581,6 +3609,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _AbstractModelObject2 = __webpack_require__(18);
 
 var _AbstractModelObject3 = _interopRequireDefault(_AbstractModelObject2);
@@ -3609,38 +3639,59 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(5).Promise : Promise;
+
 var _store = void 0;
 var wm = new WeakMap();
 
 var VuexModelObject = function (_AbstractModelObject) {
     _inherits(VuexModelObject, _AbstractModelObject);
 
-    function VuexModelObject(data, template) {
-        var _ret;
-
-        var custom = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    function VuexModelObject(data, template, module) {
         _classCallCheck(this, VuexModelObject);
 
         if (!_store) {
             throw new Error('Run VuexModelObject.use($store) before calling ctor');
         }
+        template = template || {};
+        module = module || {};
 
-        var _this = _possibleConstructorReturn(this, (VuexModelObject.__proto__ || Object.getPrototypeOf(VuexModelObject)).call(this, data, template, function (target) {
-            _generateActions2.default.call(target, template, custom);
+        var _this = _possibleConstructorReturn(this, (VuexModelObject.__proto__ || Object.getPrototypeOf(VuexModelObject)).call(this, data, {
+            template: template,
+            module: module
         }));
 
         wm.set(_this, {
             $objectId: _generateObjectId2.default.call(_this),
-            $store: _store,
-            $template: template
+            $store: _store
         });
-        return _ret = _wrapInstance2.default.call(_this, function (target) {
-            _generateModule2.default.call(target, template, custom);
-        }), _possibleConstructorReturn(_this, _ret);
+        return _this;
     }
 
     _createClass(VuexModelObject, [{
+        key: '$initialize',
+        value: function $initialize() {}
+    }, {
+        key: '$onCreate',
+        value: function $onCreate() {
+            var _this2 = this;
+
+            console.log('VuexModelObject.$onCreate', this);
+            return _get(VuexModelObject.prototype.__proto__ || Object.getPrototypeOf(VuexModelObject.prototype), '$onCreate', this).call(this).then(function () {
+                console.log('VuexModelObject.$onCreate > generate actions', _this2);
+                return _generateActions2.default.call(_this2, _this2.$template, _this2.$module);
+            }).then(function () {
+                console.log('VuexModelObject.$onCreate > generate module', _this2);
+            }).then(function () {
+                console.log('VuexModelObject.$onCreate > initialize', _this2);
+            });
+        }
+    }, {
+        key: '$module',
+        get: function get() {
+            return this.$options.module;
+        }
+    }, {
         key: '$moduleId',
         get: function get() {
             return this.constructor.name;
@@ -3653,7 +3704,24 @@ var VuexModelObject = function (_AbstractModelObject) {
     }, {
         key: '$template',
         get: function get() {
-            return wm.get(this).$template;
+            return this.$options.template;
+        }
+    }, {
+        key: '$waitReady',
+        get: function get() {
+            var _this3 = this;
+
+            var __private = wm.get(this);
+            __private.waitReady = __private.waitReady || _get(VuexModelObject.prototype.__proto__ || Object.getPrototypeOf(VuexModelObject.prototype), '$waitReady', this).then(function () {
+                return _Promise.resolve(_wrapInstance2.default.call(_this3, function (target) {
+                    return _generateModule2.default.call(target, target.$template, target.$module);
+                })).then(function (target) {
+                    return _Promise.resolve(_this3.$initialize.call(target)).then(function () {
+                        return target;
+                    });
+                });
+            });
+            return __private.waitReady;
         }
     }], [{
         key: 'use',
@@ -3724,7 +3792,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _Promise = typeof Promise === 'undefined' ? __webpack_require__(10).Promise : Promise;
+var _Promise = typeof Promise === 'undefined' ? __webpack_require__(5).Promise : Promise;
 
 var Action = function Action(name, customFn) {
     _classCallCheck(this, Action);
@@ -3871,7 +3939,7 @@ var _extend2 = __webpack_require__(35);
 
 var _extend3 = _interopRequireDefault(_extend2);
 
-var _isFunction2 = __webpack_require__(7);
+var _isFunction2 = __webpack_require__(8);
 
 var _isFunction3 = _interopRequireDefault(_isFunction2);
 
