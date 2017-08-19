@@ -3388,11 +3388,9 @@ exports.default = function (data, template) {
     var dataPromise = template.deserialize ? _Promise.resolve(template.deserialize(data)) : _Promise.resolve(data);
     return dataPromise.then(function (resolvedData) {
         var promises = visit.call(resolvedData, resolvedData, template) || [];
-        if (promises.length) {
-            return _Promise.all(promises).then(function () {
-                return resolvedData;
-            });
-        }
+        return _Promise.all(promises).then(function () {
+            return resolvedData;
+        });
     });
 };
 

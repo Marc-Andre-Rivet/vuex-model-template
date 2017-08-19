@@ -3416,11 +3416,9 @@ exports.default = function (data, template) {
         if (promises.length) {
             console.log('deserializing', resolvedData);
         }
-        if (promises.length) {
-            return _Promise.all(promises).then(function () {
-                return resolvedData;
-            });
-        }
+        return _Promise.all(promises).then(function () {
+            return resolvedData;
+        });
     });
 };
 
