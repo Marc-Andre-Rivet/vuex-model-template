@@ -1,6 +1,6 @@
 {
   "name": "vuex-model-template",
-  "version": "0.0.2-alpha.02",
+  "version": "0.0.2-alpha.03",
   "description": "Generation of vuex module from object template",
   "main": "src/index.js",
   "devDependencies": {

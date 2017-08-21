@@ -9,17 +9,27 @@ let _store;
 let wm = new WeakMap();
 
 export default class VuexModelObject extends AbstractModelObject {
-    constructor(data, template, module) {
+    constructor(data, { template /*= {}*/, actions /*= {}*/, properties /*= {}*/ }) {
         if (!_store) {
             throw new Error('Run VuexModelObject.use($store) before calling ctor');
         }
 
-        template = template || {};
-        module = module || {};
+        if (!template) {
+            throw new Error('options { template } must be defined');
+        }
+
+        if (!actions) {
+            throw new Error('options { actions } must be defined');
+        }
+
+        if (!properties) {
+            throw new Error('options { properties } must be defined');
+        }
 
         super(data, {
             template: template,
-            module: module
+            actions: actions,
+            properties: properties
         });
 
         wm.set(this, {
@@ -42,7 +52,7 @@ export default class VuexModelObject extends AbstractModelObject {
             console.log('VuexModelObject.$onCreate > generate actions', this);
             /*#endif*/
 
-            return this::generateActions(this.$template, this.$module);
+            return this::generateActions();
         }).then(() => {
             /*#if log*/
             console.log('VuexModelObject.$onCreate > generate module', this);
@@ -54,12 +64,16 @@ export default class VuexModelObject extends AbstractModelObject {
         });
     }
 
-    get $module() {
-        return this.$options.module;
+    get $actions() {
+        return this.$options.actions;
     }
 
     get $moduleId() {
         return this.constructor.name;
+    }
+
+    get $properties() {
+        return this.$options.properties;
     }
 
     get $store() {

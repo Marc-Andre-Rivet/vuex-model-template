@@ -114,7 +114,7 @@ function visitMutations(template) {
 }
 
 let wm = {};
-export default function (template, module) {
+export default function () {
     if (wm[this.$moduleId]) {
         this::mutate(`add${this.$moduleId}`, wm[this.$moduleId], this);
         return;
@@ -135,11 +135,11 @@ export default function (template, module) {
     return this.$store.registerModule(this.$moduleId, {
         state: wm,
         actions: {
-            ...this::visitActions(template),
+            ...this::visitActions(this.$template),
             ...mappedModule
         },
         mutations: {
-            ...this::visitMutations(template),
+            ...this::visitMutations(this.$template),
             [`add${this.$moduleId}`](state, [type, obj]) {
                 type.items.push(obj);
             }

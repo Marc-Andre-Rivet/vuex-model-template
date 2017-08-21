@@ -42,59 +42,63 @@ VuexModelObject.use(store);
 
 ### Usage
 ```javascript
-const template = {
-    aAny: {
-        type: TYPE.Any,
-        defaultValue: undefined
-    },
-    aArray: {
-        type: TYPE.Array,
-        defaultValue: [],
-        items: {
-            type: TYPE.String,
-        }
-    },
-    aBoolean: {
-        type: TYPE.Boolean,
-        defaultValue: false
-    },
-    aComplex: {
-        type: TYPE.Complex,
-        // defaultValue: {} <-- this property is not used for Complex
-        properties: {
-            aProp: {
+const FOO_MODEL = {
+    template: {
+        aAny: {
+            type: TYPE.Any,
+            defaultValue: undefined
+        },
+        aArray: {
+            type: TYPE.Array,
+            defaultValue: [],
+            items: {
                 type: TYPE.String,
-                // etc.
             }
+        },
+        aBoolean: {
+            type: TYPE.Boolean,
+            defaultValue: false
+        },
+        aComplex: {
+            type: TYPE.Complex,
+            // defaultValue: {} <-- this property is not used for Complex
+            properties: {
+                aProp: {
+                    type: TYPE.String,
+                    // etc.
+                }
+            }
+        },
+        aNumber: {
+            type: TYPE.Number,
+            defaultValue: 10
+        },
+        aObject: {
+            type: TYPE.Object,
+            defaultValue: undefined
+        },
+        aString: {
+        type: TYPE.String
+        defaultValue: 'defined'
+        },
+        aSymbol: {
+            type: TYPE.Symbol,
+            defaultValue: undefined
         }
     },
-    aNumber: {
-        type: TYPE.Number,
-        defaultValue: 10
+    actions: {
+        doAction(aNumber) {
+            return this.actions.aNumber.set(aNumber);
+        }
     },
-    aObject: {
-        type: TYPE.Object,
-        defaultValue: undefined
-    },
-    aString: {
-       type: TYPE.String
-       defaultValue: 'defined'
-    },
-    aSymbol: {
-        type: TYPE.Symbol,
-        defaultValue: undefined
-    }
-};
+    properties: {
 
-const module = {
-    doAction(aNumber) {
-        return this.actions.aNumber.set(aNumber);
     }
 };
 
 class FooClass extends VuexModelObject {
     constructor(data) {
-        super(data, template, module);
+        super(data, FOO_MODEL);
     }
 
     $initialize() {
