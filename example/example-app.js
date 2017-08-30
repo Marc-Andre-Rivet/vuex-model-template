@@ -11,10 +11,10 @@ export default Vue.component('v-example-app', {
         };
 
         ArticleService.get('255').then(rawData => {
-            return Article.hydrate({
+            return new Article({
                 ...rawData,
                 resolveReferences: true
-            });
+            }).$waitReady;
         }).then(article => {
             data.article = article;
         }).catch(console.error);

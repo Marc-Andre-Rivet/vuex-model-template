@@ -69,6 +69,7 @@ export default (data, template) => {
             console.log('deserializing', resolvedData);
         }
         /*#endif*/
+
         return Promise.all(promises).then(() => resolvedData);
     });
 

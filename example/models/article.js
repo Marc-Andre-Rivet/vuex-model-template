@@ -22,76 +22,76 @@ let dirtyCorollary = {
     }
 };
 
-const ARTICLE_TEMPLATE = {
-    id: {
-        ...persistedField(TYPE.String),
-        ...dirtyCorollary
-    },
-    content: {
-        ...persistedField(TYPE.Complex),
-        ...dirtyCorollary,
+const ARTICLE_MODEL = {
+    template: {
+        id: {
+            ...persistedField(TYPE.String),
+            ...dirtyCorollary
+        },
+        content: {
+            ...persistedField(TYPE.Complex),
+            ...dirtyCorollary,
 
-        properties: {
-            title: {
-                ...persistedField(TYPE.String),
-                ...dirtyCorollary
-            },
-            subTitle: {
-                ...persistedField(TYPE.String),
-                ...dirtyCorollary
-            },
-            text: {
-                ...persistedField(TYPE.String),
-                ...dirtyCorollary
-            },
-            references: {
-                ...persistedField(TYPE.Array, []),
-                ...dirtyCorollary,
-                items: {
-                    ...persistedField(TYPE.Object),
+            properties: {
+                title: {
+                    ...persistedField(TYPE.String),
+                    ...dirtyCorollary
+                },
+                subTitle: {
+                    ...persistedField(TYPE.String),
+                    ...dirtyCorollary
+                },
+                text: {
+                    ...persistedField(TYPE.String),
+                    ...dirtyCorollary
+                },
+                references: {
+                    ...persistedField(TYPE.Array, []),
                     ...dirtyCorollary,
-                    serialize(item) {
-                        return item.id;
-                    },
-                    deserialize(id) {
-                        if (this.resolveReferences) {
-                            return ArticleService.get(id).then(rawData => {
-                                return new Article.hydrate(rawData);
-                            });
-                        } else {
-                            return { id: id };
+                    items: {
+                        ...persistedField(TYPE.Object),
+                        ...dirtyCorollary,
+                        serialize(item) {
+                            return item.id;
+                        },
+                        deserialize(id) {
+                            if (this.resolveReferences) {
+                                return ArticleService.get(id).then(rawData => {
+                                    return new Article(rawData).$waitReady;
+                                });
+                            } else {
+                                return { id: id };
+                            }
                         }
                     }
+                },
+                year: {
+                    ...persistedField(TYPE.Number),
+                    ...dirtyCorollary
                 }
-            },
-            year: {
-                ...persistedField(TYPE.Number),
-                ...dirtyCorollary
             }
+        },
+        dirty: {
+            ...transientField(TYPE.Boolean, false)
+        },
+        resolveReferences: {
+            ...transientField(TYPE.Boolean, false)
         }
     },
-    dirty: {
-        ...transientField(TYPE.Boolean, false)
+    actions: {
+        // save() {
+        //     return ArticleService.save(this).then(result => {
+        //         return this.actions.dirty.set(false).then(() => result);
+        //     });
+        // }
     },
-    resolveReferences: {
-        ...transientField(TYPE.Boolean, false)
-    }
-};
+    properties: {
 
-const ARTICLE_MODULE = {
-    // save() {
-    //     return ArticleService.save(this).then(result => {
-    //         return this.actions.dirty.set(false).then(() => result);
-    //     });
-    // }
+    }
 };
 
 export default class Article extends VuexModelObject {
     constructor(data) {
-        super(data, ARTICLE_TEMPLATE, ARTICLE_MODULE);
-    }
-
-    static hydrate(rawData) {
-        return VuexModelObject.hydrate(rawData, ARTICLE_TEMPLATE, Article);
+        super(data, ARTICLE_MODEL);
     }
 }
