@@ -77,6 +77,9 @@ export default function () {
         ...this::visitUserActions(this.$template),
         ...this::visitCustomActions(this.$actions)
     };
+    /*#if log*/
+    console.log('raw actions', rawActions, this);
+    /*#endif*/
 
     this.actions = {};
     this::buildActions(rawActions, this.actions);

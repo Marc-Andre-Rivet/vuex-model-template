@@ -130,22 +130,22 @@ export default function () {
         items: [this]
     };
 
-    let mappedModule = {};
-    _.forOwn(module.actions || module, (value, key) => {
-        mappedModule[`[${this.$moduleId}]:${key}`] = value;
-    });
-    _.forOwn(module.properties, (value, key) => {
-        mappedModule[`[${this.$moduleId}]:${key}`] = value;
-    });
+    let actions = this::visitActions(this.$template);
+    let mutations = this::visitMutations(this.$template);
+
+    /*#if log*/
+    console.log('module > actions', actions);
+    console.log('module > mutations', mutations);
+    console.log('module > id', this.$moduleId);
+    /*#endif*/
 
     return this.$store.registerModule(this.$moduleId, {
         state: wm,
         actions: {
-            ...this::visitActions(this.$template),
-            ...mappedModule
+            ...actions
         },
         mutations: {
-            ...this::visitMutations(this.$template),
+            ...mutations,
             [`add${this.$moduleId}`](state, [type, obj]) {
                 type.items.push(obj);
             }
