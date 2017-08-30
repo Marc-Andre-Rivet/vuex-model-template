@@ -22,7 +22,13 @@ function visitActions(template) {
                     /*#if log*/
                     console.log('act -> corollary', actionName, target, value);
                     /*#endif*/
-                    target::template[property].corollary(value);
+                    return new Promise((resolve, reject) => {
+                        try {
+                            resolve(target::template[property].corollary(value));
+                        } catch (error) {
+                            reject(error);
+                        }
+                    });
                 }
             };
         });

@@ -9,7 +9,10 @@ let _store;
 let wm = new WeakMap();
 
 export default class VuexModelObject extends AbstractModelObject {
-    constructor(data, { template /*= {}*/, actions /*= {}*/, properties /*= {}*/ }) {
+    constructor(
+        data = {},
+        { template /*= {}*/, actions /*= {}*/, properties /*= {}*/ }
+    ) {
         if (!_store) {
             throw new Error('Run VuexModelObject.use($store) before calling ctor');
         }
@@ -25,6 +28,8 @@ export default class VuexModelObject extends AbstractModelObject {
         if (!properties) {
             throw new Error('options { properties } must be defined');
         }
+
+        data = data || {};
 
         super(data, {
             template: template,

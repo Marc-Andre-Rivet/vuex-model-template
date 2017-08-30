@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { act } from 'vuex/mixin';
 import getActions from 'VuexModelObject/getActions';
+import ProxyWrapper from 'ProxyWrapper';
 
 class Action {
     constructor(name, customFn) {
@@ -65,6 +66,8 @@ function buildActions(rawActions, target) {
         else if (_.isObject(actions)) {
             target[key] = {};
             this::buildActions(actions, target[key]);
+            target[key] = ProxyWrapper.getProxy(target[key]);
+
         }
     });
 }
@@ -84,4 +87,5 @@ export default function () {
             this.properties[key] = property.bind(this);
         });
     }
+    this.properties = ProxyWrapper.getProxy(this.properties);
 }
