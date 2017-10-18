@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import TYPE from 'enumerations/type';
 
-export default function persist(target, template) {
+export default function persist(target, template, includeTransient = false) {
     _.forOwn(template, (property, key) => {
-        if (property.transient) {
+        if (!includeTransient && property.transient) {
             return;
         }
 
@@ -16,7 +16,7 @@ export default function persist(target, template) {
             if (_.isFunction(property.serialize)) {
                 target[key] = property.serialize(this[key]);
             } else if (this[key]) {
-                target[key] = this[key]::persist({}, property.properties);
+                target[key] = this[key]::persist({}, property.properties, includeTransient);
             }
         } else if (property.type === TYPE.Array &&
             (_.isFunction(property.serialize) || (property.items && _.isFunction(property.items.serialize)))) {

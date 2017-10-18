@@ -748,7 +748,9 @@ var AbstractModelObject = function () {
     }, {
         key: 'toJSON',
         value: function toJSON() {
-            return _persist2.default.call(this, {}, this.$template);
+            var includeTransient = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+            return _persist2.default.call(this, {}, this.$template, includeTransient);
         }
     }, {
         key: '$isReady',
@@ -3579,8 +3581,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function persist(target, template) {
     var _this = this;
 
+    var includeTransient = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
     (0, _forOwn3.default)(template, function (property, key) {
-        if (property.transient) {
+        if (!includeTransient && property.transient) {
             return;
         }
         if (property.type === _type2.default.Object) {
@@ -3594,7 +3598,7 @@ function persist(target, template) {
             } else if (_this[key]) {
                 var _context;
 
-                target[key] = (_context = _this[key], persist).call(_context, {}, property.properties);
+                target[key] = (_context = _this[key], persist).call(_context, {}, property.properties, includeTransient);
             }
         } else if (property.type === _type2.default.Array && ((0, _isFunction3.default)(property.serialize) || property.items && (0, _isFunction3.default)(property.items.serialize))) {
             var array = _this[key];
