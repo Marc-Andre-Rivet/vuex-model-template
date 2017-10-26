@@ -67,8 +67,12 @@ export default class AbstractModelObject {
         return Promise.resolve();
     }
 
-    toJSON(includeTransient = false) {
-        return this::persist({}, this.$template, includeTransient);
+    toJSON() {
+        return this::persist({}, this.$template, false);
+    }
+
+    toFullJSON() {
+        return this::persist({}, this.$template, true);
     }
 
     get $isReady() {

@@ -748,9 +748,12 @@ var AbstractModelObject = function () {
     }, {
         key: 'toJSON',
         value: function toJSON() {
-            var includeTransient = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-            return _persist2.default.call(this, {}, this.$template, includeTransient);
+            return _persist2.default.call(this, {}, this.$template, false);
+        }
+    }, {
+        key: 'toFullJSON',
+        value: function toFullJSON() {
+            return _persist2.default.call(this, {}, this.$template, true);
         }
     }, {
         key: '$isReady',
