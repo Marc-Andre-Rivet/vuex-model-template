@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("es6-promise"), require("vuex")) : factory(root["es6-promise"], root["vuex"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_104__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_105__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -501,8 +501,8 @@ module.exports = isObjectLike;
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseForOwn = __webpack_require__(96),
-    castFunction = __webpack_require__(99);
+var baseForOwn = __webpack_require__(97),
+    castFunction = __webpack_require__(100);
 
 /**
  * Iterates over own enumerable string keyed properties of an object and
@@ -701,11 +701,11 @@ var _applyData = __webpack_require__(19);
 
 var _applyData2 = _interopRequireDefault(_applyData);
 
-var _deserialize = __webpack_require__(95);
+var _deserialize = __webpack_require__(96);
 
 var _deserialize2 = _interopRequireDefault(_deserialize);
 
-var _persist = __webpack_require__(100);
+var _persist = __webpack_require__(101);
 
 var _persist2 = _interopRequireDefault(_persist);
 
@@ -815,10 +815,6 @@ var _intersection2 = __webpack_require__(79);
 
 var _intersection3 = _interopRequireDefault(_intersection2);
 
-var _keys2 = __webpack_require__(4);
-
-var _keys3 = _interopRequireDefault(_keys2);
-
 var _difference2 = __webpack_require__(84);
 
 var _difference3 = _interopRequireDefault(_difference2);
@@ -854,6 +850,14 @@ var _isArray3 = _interopRequireDefault(_isArray2);
 var _isUndefined2 = __webpack_require__(94);
 
 var _isUndefined3 = _interopRequireDefault(_isUndefined2);
+
+var _keys2 = __webpack_require__(4);
+
+var _keys3 = _interopRequireDefault(_keys2);
+
+var _filter2 = __webpack_require__(95);
+
+var _filter3 = _interopRequireDefault(_filter2);
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -894,6 +898,11 @@ function throwPersistenceError(type) {
 }
 function throwReadonlyError(type) {
     throw new Error('expected \'' + prefixes.join('.') + '\' of type \'' + type.toString() + '\' to be readonly');
+}
+function getTemplateProperties(template) {
+    return (0, _filter3.default)((0, _keys3.default)(template), function (key) {
+        return typeof template[key] !== 'function';
+    });
 }
 function validateProperty(template) {
     if ((0, _isUndefined3.default)(this)) {
@@ -960,12 +969,12 @@ function validateProperty(template) {
 function validate(template) {
     var _this = this;
 
-    var unexpectedProperties = (0, _difference3.default)((0, _keys3.default)(this), (0, _keys3.default)(template));
+    var unexpectedProperties = (0, _difference3.default)((0, _keys3.default)(this), getTemplateProperties(template));
     if ((!template.strict || template.strict()) && unexpectedProperties.length) {
         var message = 'unexpected properties found in \'' + (prefixes.join('.') || 'data') + '\': \'' + unexpectedProperties + '\'';
         throw new Error(message);
     }
-    var expectedProperties = (0, _intersection3.default)((0, _keys3.default)(this), (0, _keys3.default)(template));
+    var expectedProperties = (0, _intersection3.default)((0, _keys3.default)(this), getTemplateProperties(template));
     (0, _each3.default)(expectedProperties, function (expectedProperty) {
         var _context;
 
@@ -979,7 +988,7 @@ function apply(rawData, data, template) {
 
     var promises = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 
-    var defaultProperties = (0, _difference3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
+    var defaultProperties = (0, _difference3.default)(getTemplateProperties(template), (0, _keys3.default)(data));
     (0, _each3.default)(defaultProperties, function (property) {
         if (template[property].type !== _type2.default.Complex) {
             if (template[property].type === _type2.default.Function && (0, _isFunction3.default)(template[property].defaultValue)) {
@@ -1005,7 +1014,7 @@ function apply(rawData, data, template) {
             (_context2 = _this2[property], apply).call(_context2, rawData, propData, template[property].properties, promises);
         }
     });
-    var definedProperties = (0, _intersection3.default)((0, _keys3.default)(template), (0, _keys3.default)(data));
+    var definedProperties = (0, _intersection3.default)(getTemplateProperties(template), (0, _keys3.default)(data));
     (0, _each3.default)(definedProperties, function (property) {
         if (template[property].type === _type2.default.Complex && data[property]) {
             var _context3;
@@ -1470,7 +1479,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(103);
+module.exports = __webpack_require__(104);
 
 
 /***/ }),
@@ -1486,7 +1495,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.mutate = mutate;
 exports.act = act;
 
-var _vuex = __webpack_require__(104);
+var _vuex = __webpack_require__(105);
 
 function mutate(name) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -1566,7 +1575,7 @@ var _ProxyWrapper = __webpack_require__(6);
 
 var _ProxyWrapper2 = _interopRequireDefault(_ProxyWrapper);
 
-var _VuexModelObject = __webpack_require__(101);
+var _VuexModelObject = __webpack_require__(102);
 
 var _VuexModelObject2 = _interopRequireDefault(_VuexModelObject);
 
@@ -3393,6 +3402,37 @@ module.exports = isUndefined;
 
 /***/ }),
 /* 95 */
+/***/ (function(module, exports) {
+
+/**
+ * A specialized version of `_.filter` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+function arrayFilter(array, predicate) {
+  var index = -1,
+      length = array == null ? 0 : array.length,
+      resIndex = 0,
+      result = [];
+
+  while (++index < length) {
+    var value = array[index];
+    if (predicate(value, index, array)) {
+      result[resIndex++] = value;
+    }
+  }
+  return result;
+}
+
+module.exports = arrayFilter;
+
+
+/***/ }),
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3477,10 +3517,10 @@ exports.default = function (data, template) {
 };
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseFor = __webpack_require__(97),
+var baseFor = __webpack_require__(98),
     keys = __webpack_require__(4);
 
 /**
@@ -3499,10 +3539,10 @@ module.exports = baseForOwn;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var createBaseFor = __webpack_require__(98);
+var createBaseFor = __webpack_require__(99);
 
 /**
  * The base implementation of `baseForOwn` which iterates over `object`
@@ -3521,7 +3561,7 @@ module.exports = baseFor;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports) {
 
 /**
@@ -3552,7 +3592,7 @@ module.exports = createBaseFor;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports) {
 
 /**
@@ -3579,7 +3619,7 @@ module.exports = identity;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3651,7 +3691,7 @@ function persist(target, template) {
 }
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3673,15 +3713,15 @@ var _wrapInstance = __webpack_require__(34);
 
 var _wrapInstance2 = _interopRequireDefault(_wrapInstance);
 
-var _generateActions = __webpack_require__(102);
+var _generateActions = __webpack_require__(103);
 
 var _generateActions2 = _interopRequireDefault(_generateActions);
 
-var _generateModule = __webpack_require__(105);
+var _generateModule = __webpack_require__(106);
 
 var _generateModule2 = _interopRequireDefault(_generateModule);
 
-var _generateObjectId = __webpack_require__(107);
+var _generateObjectId = __webpack_require__(108);
 
 var _generateObjectId2 = _interopRequireDefault(_generateObjectId);
 
@@ -3814,7 +3854,7 @@ var VuexModelObject = function (_AbstractModelObject) {
 exports.default = VuexModelObject;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3942,7 +3982,7 @@ function buildActions(rawActions, target) {
 }
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var copyObject = __webpack_require__(1),
@@ -3988,13 +4028,13 @@ module.exports = assignIn;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_104__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_105__;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4008,7 +4048,7 @@ var _isArray2 = __webpack_require__(0);
 
 var _isArray3 = _interopRequireDefault(_isArray2);
 
-var _reduce2 = __webpack_require__(106);
+var _reduce2 = __webpack_require__(107);
 
 var _reduce3 = _interopRequireDefault(_reduce2);
 
@@ -4199,7 +4239,7 @@ function visitMutations(template) {
 var wm = {};
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports) {
 
 /**
@@ -4231,7 +4271,7 @@ module.exports = arrayReduce;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

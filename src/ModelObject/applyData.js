@@ -15,6 +15,12 @@ function throwReadonlyError(type) {
     throw new Error(`expected '${prefixes.join('.')}' of type '${type.toString()}' to be readonly`);
 }
 
+function getTemplateProperties(template) {
+    return _.filter(_.keys(template), key => {
+        return typeof template[key] !== 'function';
+    });
+}
+
 export function validateProperty(template) {
     if (_.isUndefined(this)) {
         return;
@@ -86,7 +92,7 @@ export function validateProperty(template) {
 function validate(template) {
     let unexpectedProperties = _.difference(
         _.keys(this),
-        _.keys(template)
+        getTemplateProperties(template)
     );
 
     if ((!template.strict || template.strict()) && unexpectedProperties.length) {
@@ -96,7 +102,7 @@ function validate(template) {
 
     let expectedProperties = _.intersection(
         _.keys(this),
-        _.keys(template)
+        getTemplateProperties(template)
     );
 
     _.each(expectedProperties, expectedProperty => {
@@ -108,7 +114,7 @@ function validate(template) {
 
 function apply(rawData, data, template, promises = []) {
     let defaultProperties = _.difference(
-        _.keys(template),
+        getTemplateProperties(template),
         _.keys(data)
     );
 
@@ -143,7 +149,7 @@ function apply(rawData, data, template, promises = []) {
     });
 
     let definedProperties = _.intersection(
-        _.keys(template),
+        getTemplateProperties(template),
         _.keys(data)
     );
 
