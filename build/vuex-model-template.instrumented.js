@@ -3655,6 +3655,9 @@ function persist(target, template) {
     var includeTransient = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
     (0, _forOwn3.default)(template, function (property, key) {
+        if (typeof property === 'function') {
+            return;
+        }
         if (!includeTransient && property.transient) {
             return;
         }

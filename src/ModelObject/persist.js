@@ -3,6 +3,10 @@ import TYPE from 'enumerations/type';
 
 export default function persist(target, template, includeTransient = false) {
     _.forOwn(template, (property, key) => {
+        if (typeof property === 'function') {
+            return;
+        }
+
         if (!includeTransient && property.transient) {
             return;
         }
