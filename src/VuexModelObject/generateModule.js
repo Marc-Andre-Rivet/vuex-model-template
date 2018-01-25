@@ -24,7 +24,7 @@ function visitActions(template) {
                     /*#endif*/
                     return new Promise((resolve, reject) => {
                         try {
-                            resolve(target::template[property].corollary(value));
+                            resolve(target::template[property].corollary(target, value));
                         } catch (error) {
                             reject(error);
                         }

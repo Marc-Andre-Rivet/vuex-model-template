@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("es6-promise"), require("vuex")) : factory(root["es6-promise"], root["vuex"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_105__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_105__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -4097,7 +4097,7 @@ function visitActions(template) {
                 if ((0, _isFunction3.default)(template[property].corollary)) {
                     return new _Promise(function (resolve, reject) {
                         try {
-                            resolve(template[property].corollary.call(target, value));
+                            resolve(template[property].corollary.call(target, target, value));
                         } catch (error) {
                             reject(error);
                         }
